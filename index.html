@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+<title>Rental Property Profit Calculator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: four input cards in a row (Property, Rent, Loan, Sell) -> verdict -> charts -> yearly table; cards wrap on narrow screens */
+:root{
+  --bg:#f3f5f4; --panel:#ffffff; --fg:#17201d; --muted:#5b6964; --line:#dbe2df;
+  --accent:#0f6b52; --good:#13794f; --bad:#b4372b; --hl:#e3f1ec; --tint:#f7f9f8;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --display:"Manrope",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111715; --panel:#18211e; --fg:#e4ece9; --muted:#93a39d; --line:#2a3632;
+  --accent:#4cc39a; --good:#5fd39f; --bad:#f08072; --hl:#1d3029; --tint:#1c2622; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111715; --panel:#18211e; --fg:#e4ece9; --muted:#93a39d; --line:#2a3632;
+  --accent:#4cc39a; --good:#5fd39f; --bad:#f08072; --hl:#1d3029; --tint:#1c2622; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--display);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:20px}
+h1{font-size:1.6rem;font-weight:800;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+
+/* input cards */
+.inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.card header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--tint);border-bottom:1px solid var(--line)}
+.card header svg{width:20px;height:20px;flex:none;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card h2{margin:0;font-size:.95rem;font-weight:800}
+.fields{display:grid;gap:12px;padding:14px 16px;flex:1}
+.fields label{display:grid;gap:4px;font-size:.78rem;color:var(--muted);font-weight:500}
+.unit{position:relative}
+.unit span{position:absolute;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:.8rem;color:var(--muted);pointer-events:none}
+.unit .pre{left:10px} .unit .post{right:10px}
+input[type=number]{font:inherit;font-family:var(--mono);font-size:.95rem;width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.unit .pre ~ input{padding-left:22px}
+.unit .post ~ input{padding-right:42px}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.calc{font-size:.85rem;color:var(--muted)}
+.calc b{font-family:var(--mono);font-weight:500;color:var(--accent)}
+.card footer{padding:10px 16px;border-top:1px dashed var(--line);display:grid;gap:3px;font-size:.8rem}
+.card footer div{display:flex;justify-content:space-between;gap:8px}
+.card footer span{color:var(--muted)}
+.card footer b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums}
+.card.sell{border-color:var(--accent)}
+.card.sell header{background:var(--hl)}
+.big{font-family:var(--mono);font-size:2rem;font-weight:500;color:var(--accent);line-height:1}
+.big small{font-family:var(--display);font-size:.85rem;color:var(--muted);margin-left:6px}
+
+/* results */
+.verdict h2{margin:0 0 12px;font-size:1.05rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{border-top:2px solid var(--line);padding-top:8px}
+.stat span{display:block;font-size:.75rem;color:var(--muted)}
+.stat b{font-family:var(--mono);font-size:1.15rem;font-weight:500;font-variant-numeric:tabular-nums}
+.stat.key{border-top-color:var(--accent)}
+.stat.key b{font-size:1.4rem}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.note{margin:12px 0 0;font-size:.85rem;color:var(--muted)}
+.hc{margin-top:16px;padding:14px;background:var(--tint);border-radius:8px;display:grid;gap:10px}
+.hc h3{margin:0;font-size:.9rem}
+.hcgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:center}
+@media (max-width:700px){.hcgrid{grid-template-columns:1fr}}
+.hcl{display:grid;gap:4px;font-size:.85rem}
+.hcl div{display:flex;justify-content:space-between;gap:8px}
+.hcl b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums}
+.hcl i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.hcl .tot{border-top:1px solid var(--line);padding-top:6px;margin-top:2px;font-weight:700}
+.bars{display:grid;gap:8px;font-size:.75rem;color:var(--muted)}
+.bar{display:flex;height:28px;gap:2px;container-type:inline-size}
+.bar span{border-radius:4px;min-width:2px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;font-family:var(--mono);font-size:.72rem;font-weight:500;color:#fff}
+.bar span.dk{color:#1a1a19}
+
+/* charts */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:1000px){.charts{grid-template-columns:1fr}}
+.vgrid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.vgrid{grid-template-columns:1fr}}
+.cmp{display:grid;gap:16px;min-width:0;padding-left:20px;border-left:1px solid var(--line)}
+@media (max-width:900px){.cmp{padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:16px}}
+.cmp h3{margin:0;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.opt{display:grid;gap:4px}
+.opt span{font-size:.78rem;color:var(--muted)}
+.opt b{font-family:var(--mono);font-size:1.25rem;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.1}
+.opt .track{height:6px;border-radius:3px;background:var(--line)}
+.opt .track i{display:block;height:100%;border-radius:3px}
+.opt small{font-size:.72rem;color:var(--muted)}
+.res{font-size:.85rem;line-height:1.4}
+.res b{font-family:var(--mono);font-weight:500}
+.res.win b{color:var(--good)} .res.lose b{color:var(--bad)}
+.res small{display:block;font-size:.72rem;color:var(--muted)}
+.cmp details{font-size:.75rem;color:var(--muted)}
+.cmp summary{cursor:pointer;color:var(--accent);font-weight:700}
+.cmp details div{display:flex;justify-content:space-between;gap:8px;margin-top:3px}
+.cmp details b{font-family:var(--mono);font-weight:500;color:var(--fg)}
+.chart{position:relative;min-width:0}
+.chart h3{margin:0 0 4px;font-size:.95rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--muted);margin-bottom:6px}
+.legend i{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.chart svg{width:100%;height:auto;display:block;cursor:crosshair}
+.chart svg text{fill:var(--muted);font-family:var(--mono);font-size:10px}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:.75rem;box-shadow:0 2px 8px rgba(0,0,0,.12);white-space:nowrap}
+.tip b{font-family:var(--mono);font-weight:500}
+.tip i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+/* table */
+.tables{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:20px;align-items:start}
+@media (max-width:1000px){.tables{grid-template-columns:1fr}}
+.tables{gap:16px}
+.tables .tbl{overflow-x:auto;padding:4px 8px 8px}
+.tables th{background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--panel)}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+tr.on td{background:var(--hl);font-weight:500}
+tbody tr{cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Rental Property Profit after <span id="h1y">10</span> years</h1>
+    <p class="sub">Hold the property on rent, then sell after X years. Based on your int.xlsx model.</p>
+  </header>
+
+  <form class="inputs" id="f" onsubmit="return false">
+    <section class="card">
+      <header><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><h2>Property</h2></header>
+      <div class="fields">
+        <label>Property value<div class="unit"><span class="pre">$</span><input id="price" type="number" value="670000"></div><span class="calc">= <b id="priceAmt">$670K</b></span></label>
+        <label>Upfront cash (deposit, stamp duty, costs)<div class="unit"><span class="post">%</span><input id="dep" type="number" step="0.5" min="0" max="100" value="26"></div><span class="calc">= <b id="depAmt">$174,200</b></span></label>
+        <label>Appreciation per year<div class="big"><span id="appOut">6</span><small>% / yr</small></div>
+          <input id="app" type="range" min="0" max="15" step="0.5" value="6"></label>
+      </div>
+      <footer id="ftProp"></footer>
+    </section>
+
+    <section class="card">
+      <header><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9"/><path d="M17 6l3 3"/><path d="M15 8l2 2"/></svg><h2>Rent &amp; expenses</h2></header>
+      <div class="fields">
+        <label>Rent per week<div class="big">$<span id="rentOut">600</span><small>/ week</small></div>
+          <input id="rent" type="range" min="100" max="2000" step="10" value="600"></label>
+        <label>Property management (of rent)<div class="big"><span id="mgmtOut">6</span><small>% of rent</small></div>
+          <input id="mgmt" type="range" min="0" max="15" step="0.5" value="6"></label>
+        <label>Other expenses per year<div class="unit"><span class="pre">$</span><input id="other" type="number" value="5000"></div></label>
+      </div>
+      <footer id="ftRent"></footer>
+    </section>
+
+    <section class="card">
+      <header><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg><h2>Loan</h2></header>
+      <div class="fields">
+        <label>Loan amount (of value)<div class="big"><span id="lvrOut">80</span><small>% of value</small></div>
+          <input id="lvr" type="range" min="0" max="100" step="5" value="80"></label>
+        <label>Interest rate<div class="big"><span id="rateOut">6</span><small>% / yr</small></div>
+          <input id="rate" type="range" min="1" max="12" step="0.05" value="6"></label>
+        <label>Loan term<div class="big"><span id="termOut">30</span><small>years</small></div>
+          <input id="term" type="range" min="5" max="40" step="1" value="30"></label>
+      </div>
+      <footer id="ftLoan"></footer>
+    </section>
+
+    <section class="card sell">
+      <header><svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M5 15l4-4 3 3 7-7"/><path d="M15 7h4v4"/></svg><h2>Sell &amp; compare</h2></header>
+      <div class="fields">
+        <label>Sell after<div class="big"><span id="yrsOut">10</span><small>years</small></div>
+          <input id="yrs" type="range" min="1" max="30" value="10"></label>
+        <label>Selling costs (agent, legal, marketing)<div class="big"><span id="sellcOut">2.5</span><small>% of sale</small></div>
+          <input id="sellc" type="range" min="0" max="6" step="0.1" value="2.5"></label>
+        <label>Deposit invested elsewhere at<div class="big"><span id="altOut">8</span><small>% / yr</small></div>
+          <input id="alt" type="range" min="0" max="15" step="0.5" value="8"></label>
+      </div>
+    </section>
+  </form>
+
+  <section class="panel verdict"><div class="vgrid"><div>
+    <h2 id="vh">If you sell after 10 years</h2>
+    <div class="stats" id="stats"></div>
+    <div class="hc" id="hc"></div>
+    <p class="note" id="vnote"></p>
+  </div><aside class="cmp" id="cmp"></aside></div></section>
+
+
+  <div class="tables">
+    <section class="card">
+      <header><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg><h2>Loan repayments</h2></header>
+      <div class="tbl"><table>
+        <thead><tr><th>Year</th><th>Interest paid</th><th>Principal paid</th><th>Loan left</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table></div>
+    </section>
+    <section class="card">
+      <header><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><h2>Property value &amp; profit</h2></header>
+      <div class="tbl"><table>
+        <thead><tr><th>Year</th><th>Property value</th><th>Selling costs</th><th>Holding cost (total)</th><th>Profit if sold</th></tr></thead>
+        <tbody id="tb2"></tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <section class="panel charts">
+    <div class="chart" id="c1"></div>
+    <div class="chart" id="c2"></div>
+  </section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const v=id=>parseFloat($(id).value)||0;
+const fmt=n=>(n<0?'-$':'$')+Math.round(Math.abs(n)).toLocaleString('en-AU');
+const cls=n=>n>=0?'pos':'neg';
+const rows=list=>list.map(([k,n])=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`).join('');
+
+function calc(){
+  const P=v('price'), r=v('rate')/100, n=v('term');
+  const deposit=P*v('dep')/100;                       // B2
+  const rentYr=v('rent')*52;                          // E2
+  const L=P*v('lvr')/100;                             // loan amount
+  const mgmt=rentYr*v('mgmt')/100;                    // E6
+  const m=r/12, emi=m?L*m/(1-Math.pow(1+m,-n*12)):L/(n*12); // B9 PMT on loan amount
+  const g=Math.pow(1+m,12), f=m?(g-1)/m:12;
+  const out=[]; let bal=L, cumInt=0;
+  for(let y=1;y<=Math.max(n,1);y++){
+    const open=bal; bal=Math.max(0,open*g-emi*f);     // L column
+    const prin=open-bal, int=emi*12-prin;
+    const val=Math.ceil(P*Math.pow(1+v('app')/100,y)); // B15
+    const sellCost=val*v('sellc')/100;                // selling costs on sale price
+    cumInt+=int;                                      // real interest paid so far
+    const cumPrin=L-bal;                              // principal repaid from your pocket
+    const hold=cumInt+(mgmt+v('other')-rentYr)*y;     // net holding cost (negative = net income)
+    const profit=val-sellCost-deposit-bal-cumPrin-hold;
+    const altGain=deposit*Math.pow(1+v('alt')/100,y)-deposit; // E15
+    out.push({y,val,sellCost,bal,prin,int,cumInt,cumPrin,hold,profit,altGain});
+  }
+  const interest=out[0].int, totalB=interest+v('other')+mgmt, holding=totalB-rentYr; // year 1
+  return {L,deposit,rentYr,interest,mgmt,totalB,holding,emi,rows:out};
+}
+
+const short=n=>{const a=Math.abs(n),s=n<0?'-$':'$';return a>=1e6?s+(a/1e6).toFixed(1)+'M':s+Math.round(a/1e3)+'k';};
+function niceStep(r){const p=Math.pow(10,Math.floor(Math.log10(r||1))),q=r/p;return (q<=1?1:q<=2?2:q<=5?5:10)*p;}
+
+function chart(el,title,series,X){
+  const W=520,H=230,l=58,r=14,t=10,b=26,n=series[0].vals.length;
+  const all=series.flatMap(s=>s.vals);
+  let lo=Math.min(0,...all),hi=Math.max(...all);
+  const step=niceStep((hi-lo)/4);lo=Math.floor(lo/step)*step;hi=Math.ceil(hi/step)*step;
+  const x=y=>l+(n>1?(y-1)/(n-1):0)*(W-l-r), y=v=>t+(hi-v)/(hi-lo)*(H-t-b);
+  let g='';
+  for(let v=lo;v<=hi+1e-6;v+=step)g+=`<line x1="${l}" x2="${W-r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="${v===0?1.5:1}"/><text x="${l-6}" y="${y(v)+3}" text-anchor="end">${short(v)}</text>`;
+  const xs=n>20?5:n>10?2:1;
+  for(let i=1;i<=n;i++)if(i===1||i%xs===0)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${i}</text>`;
+  g+=`<line x1="${x(X)}" x2="${x(X)}" y1="${t}" y2="${H-b}" stroke="var(--accent)" stroke-dasharray="4 3"/><text x="${x(X)+4}" y="${t+10}" style="fill:var(--accent)">Sell yr ${X}</text>`;
+  series.forEach(s=>{
+    g+=`<polyline fill="none" stroke="${s.c}" stroke-width="2" stroke-linejoin="round" points="${s.vals.map((v,i)=>x(i+1)+','+y(v)).join(' ')}"/>`;
+    g+=`<circle cx="${x(X)}" cy="${y(s.vals[X-1])}" r="4.5" fill="${s.c}" stroke="var(--panel)" stroke-width="2"/>`;
+  });
+  g+=`<g class="hv" visibility="hidden"><line y1="${t}" y2="${H-b}" stroke="var(--muted)" stroke-width="1"/></g><rect x="${l}" y="0" width="${W-l-r}" height="${H}" fill="transparent"/>`;
+  el.innerHTML=`<h3>${title}</h3><div class="legend">${series.map(s=>`<span><i style="background:${s.c}"></i>${s.name}</span>`).join('')}</div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}">${g}</svg><div class="tip" hidden></div>`;
+  const svg=el.querySelector('svg'),hv=svg.querySelector('.hv'),ln=hv.querySelector('line'),tip=el.querySelector('.tip');
+  const yearAt=e=>{const p=svg.getBoundingClientRect(),sx=(e.clientX-p.left)*W/p.width;return Math.min(n,Math.max(1,Math.round((sx-l)/(W-l-r)*(n-1)+1)));};
+  svg.addEventListener('mousemove',e=>{
+    const yr=yearAt(e);ln.setAttribute('x1',x(yr));ln.setAttribute('x2',x(yr));hv.setAttribute('visibility','visible');
+    tip.innerHTML=`<div>Year ${yr}</div>`+series.map(s=>`<div><i style="background:${s.c}"></i>${s.name}: <b>${fmt(s.vals[yr-1])}</b></div>`).join('');
+    tip.hidden=false;const p=svg.getBoundingClientRect(),px=(x(yr)/W)*p.width;
+    tip.style.top=(svg.offsetTop+8)+'px';tip.style.left=(px>p.width/2?px-tip.offsetWidth-10:px+10)+'px';
+  });
+  svg.addEventListener('mouseleave',()=>{hv.setAttribute('visibility','hidden');tip.hidden=true;});
+  svg.addEventListener('click',e=>{$('yrs').value=yearAt(e);render();});
+}
+
+function render(){
+  const d=calc();
+  $('yrs').max=d.rows.length;
+  const X=Math.min(Math.max(1,Math.round(v('yrs'))),d.rows.length), row=d.rows[X-1];
+  $('yrsOut').textContent=X;
+  $('h1y').textContent=X;
+  $('appOut').textContent=v('app');
+  $('altOut').textContent=v('alt');
+  $('mgmtOut').textContent=v('mgmt');
+  $('rentOut').textContent=v('rent').toLocaleString('en-AU');
+  $('lvrOut').textContent=v('lvr');
+  $('termOut').textContent=v('term');
+  $('sellcOut').textContent=v('sellc');
+  $('rateOut').textContent=v('rate').toFixed(2);
+
+  $('depAmt').textContent=fmt(d.deposit);
+  const p=v('price');
+  $('priceAmt').textContent=p>=1e6?'$'+parseFloat((p/1e6).toFixed(2))+'M':'$'+parseFloat((p/1e3).toFixed(1))+'K';
+  const depOnly=v('price')-d.L, extra=d.deposit-depOnly;
+  $('ftProp').innerHTML=rows(extra>=0?[['Deposit',depOnly],['Stamp duty & costs',extra],['Upfront cash',d.deposit]]:[['Upfront cash',d.deposit]]);
+  $('ftRent').innerHTML=rows([['Rent / yr',d.rentYr],['Expenses yr 1 (incl. interest)',d.totalB],d.holding>=0?['Net cost yr 1',d.holding]:['Net income yr 1',-d.holding]]);
+  $('ftLoan').innerHTML=rows([['Loan amount',d.L],['Monthly EMI',d.emi],['Annual repayment',d.emi*12]]);
+
+  $('vh').textContent=`If you sell after ${X} year${X>1?'s':''}`;
+  const diff=row.profit-row.altGain;
+  $('stats').innerHTML=`
+    <div class="stat key"><span>Profit from property</span><b class="${cls(row.profit)}">${fmt(row.profit)}</b></div>
+    <div class="stat"><span>Monthly EMI</span><b>${fmt(d.emi)}</b></div>
+    <div class="stat"><span>Sale price</span><b>${fmt(row.val)}</b></div>
+    <div class="stat"><span>Selling costs (${v('sellc')}%)</span><b>${fmt(row.sellCost)}</b></div>
+    <div class="stat"><span>Loan still owed</span><b>${fmt(row.bal)}</b></div>
+    <div class="stat"><span>Principal repaid</span><b>${fmt(row.cumPrin)}</b></div>
+    <div class="stat"><span>${row.hold>=0?'Total holding cost':'Net rental income'}</span><b>${fmt(Math.abs(row.hold))}</b></div>`;
+  const over=d.rows.find(r=>r.profit>=r.altGain);
+  const ln=(k,n)=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`;
+  const top=Math.max(Math.abs(row.profit),Math.abs(row.altGain))||1, w=n=>Math.max(0,n)/top*100;
+  $('cmp').innerHTML=`
+    <h3>Property vs deposit invested</h3>
+    <div class="opt"><span>Property profit</span><b class="${cls(row.profit)}">${fmt(row.profit)}</b>
+      <div class="track"><i style="width:${w(row.profit)}%;background:var(--s1)"></i></div></div>
+    <div class="opt"><span>Deposit at ${v('alt')}%</span><b>${fmt(row.altGain)}</b>
+      <div class="track"><i style="width:${w(row.altGain)}%;background:var(--s2)"></i></div>
+      <small>${fmt(d.deposit)} grows to ${fmt(d.deposit+row.altGain)}</small></div>
+    <div class="res ${diff>=0?'win':'lose'}">${diff>=0?'Property':'Deposit'} ahead by <b>${fmt(Math.abs(diff))}</b>
+      <small>${over?`Property overtakes from year ${over.y}`:'Property never overtakes within the loan term'}</small></div>
+    <details><summary>Show calculation</summary>
+      ${ln('Sale price',row.val)}${ln('− Selling costs',-row.sellCost)}${ln('− Upfront cash',-d.deposit)}${ln('− Loan owed',-row.bal)}${ln('− Principal repaid',-row.cumPrin)}${ln(row.hold>=0?'− Holding cost':'+ Net rental income',-row.hold)}${ln('= Property profit',row.profit)}</details>`;
+  const parts=[['Loan interest',row.cumInt,'var(--s1)'],['Property management',d.mgmt*X,'var(--s2)'],['Other expenses',v('other')*X,'var(--s4)']];
+  const rentT=d.rentYr*X, costT=row.cumInt+(d.mgmt+v('other'))*X, mx=Math.max(rentT,costT)||1;
+  $('hc').innerHTML=`<h3>What's in the total holding cost (${X} yr${X>1?'s':''})</h3>
+    <div class="hcgrid">
+      <div class="hcl">${parts.map(([k,n,c])=>`<div><span><i style="background:${c}"></i>${k}</span><b>${fmt(n)}</b></div>`).join('')}
+        <div><span><i style="background:var(--s3)"></i>Less rent received</span><b>−${fmt(rentT)}</b></div>
+        <div class="tot"><span>${row.hold>=0?'Total holding cost':'Net rental income'}</span><b>${fmt(Math.abs(row.hold))}</b></div></div>
+      <div class="bars">
+        <div>Costs ${fmt(costT)}</div>
+        <div class="bar">${parts.map(([k,n,c])=>`<span title="${k}: ${fmt(n)}" class="${c.includes('s4')?'dk':''}" style="background:${c};width:${n/mx*100}%">${n/mx>0.12?fmt(n):''}</span>`).join('')}</div>
+        <div>Rent ${fmt(rentT)}</div>
+        <div class="bar"><span title="Rent: ${fmt(rentT)}" style="background:var(--s3);width:${rentT/mx*100}%">${fmt(rentT)}</span></div>
+        <div>${row.hold>=0?'The gap between the two bars is what you pay out of pocket.':'Rent covers all costs; the extra adds to your profit.'}</div>
+      </div>
+    </div>`;
+  $('vnote').textContent=`Profit = sale price − selling costs − upfront cash − loan still owed − principal repaid − holding cost (real interest + expenses − rent). `+
+    (diff>=0?`Holding the property beats investing the deposit by ${fmt(diff)}.`:`Investing the deposit elsewhere comes out ${fmt(-diff)} ahead.`);
+
+  chart($('c1'),'Property value vs loan owed',[
+    {name:'Property value',c:'var(--s1)',vals:d.rows.map(r=>r.val)},
+    {name:'Loan owed',c:'var(--s2)',vals:d.rows.map(r=>r.bal)}],X);
+  chart($('c2'),'Profit if sold vs investing the deposit',[
+    {name:'Property profit',c:'var(--s1)',vals:d.rows.map(r=>r.profit)},
+    {name:`Deposit at ${v('alt')}%`,c:'var(--s2)',vals:d.rows.map(r=>r.altGain)}],X);
+
+  $('tb').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${r.y===X?'on':''}"><td>${r.y}</td><td>${fmt(r.int)}</td><td>${fmt(r.prin)}</td><td>${fmt(r.bal)}</td></tr>`).join('');
+  $('tb2').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${r.y===X?'on':''}"><td>${r.y}</td><td>${fmt(r.val)}</td><td>${fmt(r.sellCost)}</td><td>${fmt(r.hold)}</td><td class="${cls(r.profit)}">${fmt(r.profit)}</td></tr>`).join('');
+}
+$('f').addEventListener('input',render);
+['tb','tb2'].forEach(id=>$(id).addEventListener('click',e=>{const tr=e.target.closest('tr');if(tr){$('yrs').value=tr.dataset.y;render();}}));
+render();
+</script>
+
+</body>
+</html>
