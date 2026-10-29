@@ -62,7 +62,33 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 /* results */
 .verdict h2{margin:0 0 12px;font-size:1.05rem}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stats{display:grid;gap:14px}
+.hero{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 20px;padding:16px 20px;border-radius:10px;background:color-mix(in srgb,var(--good) 12%,var(--panel));border:1px solid color-mix(in srgb,var(--good) 35%,var(--panel))}
+.hero.loss{background:color-mix(in srgb,var(--bad) 10%,var(--panel));border-color:color-mix(in srgb,var(--bad) 35%,var(--panel))}
+.hero span{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.hero b{display:block;font-family:var(--mono);font-size:2.2rem;font-weight:500;line-height:1.1;color:var(--good)}
+.hero.loss b{color:var(--bad)}
+.hero small{font-size:.8rem;color:var(--muted)}
+.flow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.flow{grid-template-columns:1fr}}
+.box{border-radius:10px;padding:12px 16px;display:grid;gap:5px;font-size:.88rem;min-width:0}
+.box.get{background:color-mix(in srgb,var(--s3) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--s3) 30%,var(--panel))}
+.box.put{background:color-mix(in srgb,var(--s2) 9%,var(--panel));border:1px solid color-mix(in srgb,var(--s2) 30%,var(--panel))}
+.box h4{margin:0 0 4px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:8px}
+.box h4 i{width:10px;height:10px;border-radius:50%}
+.box.get h4 i{background:var(--s3)} .box.put h4 i{background:var(--s2)}
+.box div{display:flex;justify-content:space-between;gap:8px}
+.box div span{color:var(--muted)}
+.box div b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums}
+.box .tot{border-top:1px solid color-mix(in srgb,var(--fg) 15%,transparent);padding-top:6px;margin-top:3px;font-weight:700}
+.box .tot span{color:var(--fg)}
+.box .tot b{font-size:1.05rem}
+.eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.eq b{font-family:var(--mono);font-weight:500;padding:3px 10px;border-radius:999px;color:var(--fg)}
+.eq .e1{background:color-mix(in srgb,var(--s3) 18%,var(--panel))}
+.eq .e2{background:color-mix(in srgb,var(--s2) 16%,var(--panel))}
+.eq .e3{background:color-mix(in srgb,var(--good) 18%,var(--panel));color:var(--good)}
+.eq .e3.neg{background:color-mix(in srgb,var(--bad) 15%,var(--panel));color:var(--bad)}
 .stat{border-top:2px solid var(--line);padding-top:8px}
 .stat span{display:block;font-size:.75rem;color:var(--muted)}
 .stat b{font-family:var(--mono);font-size:1.15rem;font-weight:500;font-variant-numeric:tabular-nums}
@@ -323,14 +349,20 @@ function render(){
 
   $('vh').textContent=`If you sell after ${X} year${X>1?'s':''}`;
   const diff=row.profit-row.altGain;
+  const cashSale=row.val-row.sellCost-row.bal, putIn=d.deposit+row.cumPrin+row.hold;
+  const li=(k,n)=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`;
   $('stats').innerHTML=`
-    <div class="stat key"><span>Profit from property</span><b class="${cls(row.profit)}">${fmt(row.profit)}</b></div>
-    <div class="stat"><span>Monthly EMI</span><b>${fmt(d.emi)}</b></div>
-    <div class="stat"><span>Sale price</span><b>${fmt(row.val)}</b></div>
-    <div class="stat"><span>Selling costs (${v('sellc')}%)</span><b>${fmt(row.sellCost)}</b></div>
-    <div class="stat"><span>Loan still owed</span><b>${fmt(row.bal)}</b></div>
-    <div class="stat"><span>Principal repaid</span><b>${fmt(row.cumPrin)}</b></div>
-    <div class="stat"><span>${row.hold>=0?'Total holding cost':'Net rental income'}</span><b>${fmt(Math.abs(row.hold))}</b></div>`;
+    <div class="hero ${row.profit<0?'loss':''}"><div><span>${row.profit<0?'Loss from property':'Profit from property'}</span><b>${fmt(row.profit)}</b></div>
+      <small>Sold after ${X} year${X>1?'s':''} for ${fmt(row.val)}</small></div>
+    <div class="flow">
+      <div class="box get"><h4><i></i>What you get at sale</h4>
+        ${li('Sale price',row.val)}${li(`− Selling costs (${v('sellc')}%)`,-row.sellCost)}${li('− Loan paid off',-row.bal)}
+        <div class="tot"><span>Cash from sale</span><b>${fmt(cashSale)}</b></div></div>
+      <div class="box put"><h4><i></i>What you put in</h4>
+        ${li('Upfront cash',d.deposit)}${li('Principal repaid',row.cumPrin)}${li(row.hold>=0?'Holding cost':'Net rental income',row.hold)}
+        <div class="tot"><span>Total put in</span><b>${fmt(putIn)}</b></div></div>
+    </div>
+    <div class="eq"><b class="e1">${fmt(cashSale)}</b>−<b class="e2">${fmt(putIn)}</b>=<b class="e3 ${row.profit<0?'neg':''}">${fmt(row.profit)}</b></div>`;
   const over=d.rows.find(r=>r.profit>=r.altGain);
   const ln=(k,n)=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`;
   const top=Math.max(Math.abs(row.profit),Math.abs(row.altGain))||1, w=n=>Math.max(0,n)/top*100;
@@ -347,7 +379,7 @@ function render(){
       ${ln('Sale price',row.val)}${ln('− Selling costs',-row.sellCost)}${ln('− Upfront cash',-d.deposit)}${ln('− Loan owed',-row.bal)}${ln('− Principal repaid',-row.cumPrin)}${ln(row.hold>=0?'− Holding cost':'+ Net rental income',-row.hold)}${ln('= Property profit',row.profit)}</details>`;
   const parts=[['Loan interest',row.cumInt,'var(--s1)'],['Property management',d.mgmt*X,'var(--s2)'],['Other expenses',v('other')*X,'var(--s4)']];
   const rentT=d.rentYr*X, costT=row.cumInt+(d.mgmt+v('other'))*X, mx=Math.max(rentT,costT)||1;
-  $('hc').innerHTML=`<h3>What's in the total holding cost (${X} yr${X>1?'s':''})</h3>
+  $('hc').innerHTML=`<h3>Holding cost breakdown (${X} yr${X>1?'s':''})</h3>
     <div class="hcgrid">
       <div class="hcl">${parts.map(([k,n,c])=>`<div><span><i style="background:${c}"></i>${k}</span><b>${fmt(n)}</b></div>`).join('')}
         <div><span><i style="background:var(--s3)"></i>Less rent received</span><b>−${fmt(rentT)}</b></div>
