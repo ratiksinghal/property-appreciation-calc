@@ -100,6 +100,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .pos{color:var(--good)} .neg{color:var(--bad)}
 .note{margin:12px 0 0;font-size:.85rem;color:var(--muted)}
 .sub{line-height:1.5}
+label.alt{padding:10px 12px;border-radius:8px;background:color-mix(in srgb,var(--s2) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--s2) 30%,var(--panel))}
+label.alt .big{color:var(--s2)}
+label.alt input[type=range]{accent-color:var(--s2)}
+details.note summary{cursor:pointer;color:var(--accent);font-weight:700}
 .flag{margin:8px 0 0;font-size:.8rem;color:var(--muted)}
 .flag a,.disc a{color:var(--accent)}
 .disc{border-top:1px solid var(--line);padding-top:16px;font-size:.78rem;color:var(--muted);line-height:1.55}
@@ -170,8 +174,7 @@ tbody tr{cursor:pointer}
 
 <div class="wrap">
   <header>
-    <h1>Rental Property Profit after <span id="h1y">10</span> years</h1>
-    <p class="sub">See what you could make by holding a rental property and selling it after any number of years, with loan repayments, holding costs and selling costs included.</p>
+    <h1>Calculate your property profit after <span id="h1y">10</span> years</h1>
     <p class="flag">For illustration only. Not financial advice. <a href="#disclaimer">Read the disclaimer</a>.</p>
   </header>
 
@@ -222,7 +225,7 @@ tbody tr{cursor:pointer}
           <input id="yrs" type="range" min="1" max="30" value="10"></label>
         <label>Selling costs (agent, legal, marketing)<div class="big"><span id="sellcOut">2.5</span><small>% of sale</small></div>
           <input id="sellc" type="range" min="0" max="6" step="0.1" value="2.5"></label>
-        <label>Deposit invested elsewhere at<div class="big"><span id="altOut">8</span><small>% / yr</small></div>
+        <label class="alt">Or invest the upfront cash elsewhere at<div class="big"><span id="altOut">8</span><small>% / yr</small></div>
           <input id="alt" type="range" min="0" max="15" step="0.5" value="8"></label>
       </div>
     </section>
@@ -232,7 +235,6 @@ tbody tr{cursor:pointer}
     <h2 id="vh">If you sell after 10 years</h2>
     <div class="stats" id="stats"></div>
     <div class="hc" id="hc"></div>
-    <p class="note" id="vnote"></p>
   </div><aside class="cmp" id="cmp"></aside></div></section>
 
 
@@ -384,9 +386,7 @@ function render(){
       <div class="track"><i style="width:${w(row.altGain)}%;background:var(--s2)"></i></div>
       <small>${fmt(d.deposit)} grows to ${fmt(d.deposit+row.altGain)}</small></div>
     <div class="res ${diff>=0?'win':'lose'}">${diff>=0?'Property':'Deposit'} ahead by <b>${fmt(Math.abs(diff))}</b>
-      <small>${over?`Property overtakes from year ${over.y}`:'Property never overtakes within the loan term'}</small></div>
-    <details><summary>Show calculation</summary>
-      ${ln('Sale price',row.val)}${ln('− Selling costs',-row.sellCost)}${ln('− Upfront cash',-d.deposit)}${ln('− Loan owed',-row.bal)}${ln('− Principal repaid',-row.cumPrin)}${ln(row.hold>=0?'− Holding cost':'+ Net rental income',-row.hold)}${ln('= Property profit',row.profit)}</details>`;
+      <small>${over?`Property overtakes from year ${over.y}`:'Property never overtakes within the loan term'}</small></div>`;
   const parts=[['Loan interest',row.cumInt,'var(--s1)'],['Property management',d.mgmt*X,'var(--s2)'],['Other expenses',v('other')*X,'var(--s4)']];
   const rentT=d.rentYr*X, costT=row.cumInt+(d.mgmt+v('other'))*X, mx=Math.max(rentT,costT)||1;
   $('hc').innerHTML=`<h3>Holding cost breakdown (${X} yr${X>1?'s':''})</h3>
@@ -402,8 +402,6 @@ function render(){
         <div>${row.hold>=0?'The gap between the two bars is what you pay out of pocket.':'Rent covers all costs; the extra adds to your profit.'}</div>
       </div>
     </div>`;
-  $('vnote').textContent=`Profit = sale price − selling costs − upfront cash − loan still owed − principal repaid − holding cost (real interest + expenses − rent). `+
-    (diff>=0?`Holding the property beats investing the deposit by ${fmt(diff)}.`:`Investing the deposit elsewhere comes out ${fmt(-diff)} ahead.`);
 
   chart($('c1'),'Property value vs loan owed',[
     {name:'Property value',c:'var(--s1)',vals:d.rows.map(r=>r.val)},
