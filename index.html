@@ -1,10 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-AU">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rental Property Profit Calculator Australia | Hold vs Sell</title>
+<meta name="description" content="Free Australian rental property calculator. See your profit if you sell after X years, with loan repayments, holding costs, selling costs and equity growth.">
+<meta property="og:title" content="Rental Property Profit Calculator Australia">
+<meta property="og:description" content="See your profit if you hold a rental property and sell after X years. Free, no sign-up.">
+<meta property="og:type" content="website">
 <style>body{margin:0}[hidden]{display:none!important}</style>
-<title>Rental Property Profit Calculator</title>
+
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -65,6 +70,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .stat.key b{font-size:1.4rem}
 .pos{color:var(--good)} .neg{color:var(--bad)}
 .note{margin:12px 0 0;font-size:.85rem;color:var(--muted)}
+.sub{line-height:1.5}
+.flag{margin:8px 0 0;font-size:.8rem;color:var(--muted)}
+.flag a,.disc a{color:var(--accent)}
+.disc{border-top:1px solid var(--line);padding-top:16px;font-size:.78rem;color:var(--muted);line-height:1.55}
+.disc h2{margin:0 0 6px;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--fg)}
+.disc p{margin:0 0 8px;max-width:95ch}
 .hc{margin-top:16px;padding:14px;background:var(--tint);border-radius:8px;display:grid;gap:10px}
 .hc h3{margin:0;font-size:.9rem}
 .hcgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:center}
@@ -131,14 +142,15 @@ tbody tr{cursor:pointer}
 <div class="wrap">
   <header>
     <h1>Rental Property Profit after <span id="h1y">10</span> years</h1>
-    <p class="sub">Hold the property on rent, then sell after X years. Based on your int.xlsx model.</p>
+    <p class="sub">See what you could make by holding a rental property and selling it after any number of years, with loan repayments, holding costs and selling costs included.</p>
+    <p class="flag">For illustration only. Not financial advice. <a href="#disclaimer">Read the disclaimer</a>.</p>
   </header>
 
   <form class="inputs" id="f" onsubmit="return false">
     <section class="card">
       <header><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><h2>Property</h2></header>
       <div class="fields">
-        <label>Property value<div class="unit"><span class="pre">$</span><input id="price" type="number" value="670000"></div><span class="calc">= <b id="priceAmt">$670K</b></span></label>
+        <label>Property value<div class="unit"><span class="pre">$</span><input id="price" type="number" value="750000"></div><span class="calc">= <b id="priceAmt">$750K</b></span></label>
         <label>Upfront cash (deposit, stamp duty, costs)<div class="unit"><span class="post">%</span><input id="dep" type="number" step="0.5" min="0" max="100" value="26"></div><span class="calc">= <b id="depAmt">$174,200</b></span></label>
         <label>Appreciation per year<div class="big"><span id="appOut">6</span><small>% / yr</small></div>
           <input id="app" type="range" min="0" max="15" step="0.5" value="6"></label>
@@ -213,6 +225,13 @@ tbody tr{cursor:pointer}
     <div class="chart" id="c1"></div>
     <div class="chart" id="c2"></div>
   </section>
+
+  <footer class="disc" id="disclaimer">
+    <h2>Disclaimer</h2>
+    <p>This calculator provides general information only and is intended for illustration and educational purposes. It is not financial, investment, tax, legal or credit advice, and it does not take into account your objectives, financial situation or needs. We are not licensed financial advisers, mortgage brokers or tax agents.</p>
+    <p>All results are estimates based solely on the figures you enter and on simplified assumptions. The calculator uses fixed values throughout: property growth, interest rate, rent and expenses stay the same every year. It does not include income tax, negative gearing, depreciation, capital gains tax, land tax, vacancy periods, rent increases, inflation or changes in interest rates. Actual outcomes will differ, and past or assumed returns are not a guarantee of future results.</p>
+    <p>Do not rely on this calculator to make any financial decision. Before buying, selling or borrowing, consider seeking advice from a licensed financial adviser, mortgage broker or registered tax agent. You use this calculator at your own risk, and we accept no liability for any loss arising from its use.</p>
+  </footer>
 </div>
 
 <script>
