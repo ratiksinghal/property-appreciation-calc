@@ -174,7 +174,7 @@ tbody tr{cursor:pointer}
 
 <div class="wrap">
   <header>
-    <h1>Calculate your property profit after <span id="h1y">10</span> years</h1>
+    <h1>Calculate your property profit after any number of years</h1>
     <p class="flag">For illustration only. Not financial advice. <a href="#disclaimer">Read the disclaimer</a>.</p>
   </header>
 
@@ -338,7 +338,6 @@ function render(){
   $('yrs').max=d.rows.length;
   const X=Math.min(Math.max(1,Math.round(v('yrs'))),d.rows.length), row=d.rows[X-1];
   $('yrsOut').textContent=X;
-  $('h1y').textContent=X;
   $('appOut').textContent=v('app');
   $('altOut').textContent=v('alt');
   $('mgmtOut').textContent=v('mgmt');
