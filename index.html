@@ -89,6 +89,25 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .lk{font-size:.72rem;color:var(--muted);font-weight:500}
 .lk b{font-family:var(--mono);font-weight:500;color:var(--fg)}
 .lk.init{margin-top:4px;padding:6px 10px;border-radius:6px;background:var(--hl);color:var(--fg);font-size:.8rem}
+.rp{margin:14px 16px 0;padding:12px 14px;border-radius:10px;background:color-mix(in srgb,var(--accent) 12%,var(--panel));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--panel))}
+.rp .l{font-size:.75rem;color:var(--accent);font-weight:700}
+.rp .v{font-family:var(--mono);font-size:1.9rem;font-weight:500;color:var(--fg);line-height:1.15}
+.rp .v small{font-family:var(--display);font-size:.8rem;color:var(--muted);margin-left:6px}
+.rp .m{font-size:.75rem;color:var(--muted)}
+.rp .wk{font-size:.85rem;color:var(--muted);margin:1px 0 3px}
+.rp .wk b{font-family:var(--mono);font-weight:500;font-size:1.05rem;color:var(--fg)}
+.ti2{margin:0 16px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.75rem;color:var(--muted);padding:10px 0;border-bottom:1px dashed var(--line)}
+.ti2 b{font-family:var(--mono);font-weight:500;color:var(--bad);font-size:.95rem;white-space:nowrap}
+.fut{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:var(--tint);border:1px solid var(--line);font-family:var(--display);font-size:.75rem;color:var(--fg);vertical-align:middle;white-space:nowrap}
+.fut b{font-family:var(--mono);font-weight:500;color:var(--accent)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 16px}
+.two .big{font-size:1.5rem}
+.two .big small{margin-left:4px}
+.out{margin:0 16px 14px;padding:9px 12px;border-radius:8px;font-size:.82rem;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.out b{font-family:var(--mono);font-weight:500;font-size:1rem;white-space:nowrap}
+.out.neg{background:color-mix(in srgb,var(--s2) 12%,var(--panel));color:var(--fg)}
+.out.pos{background:color-mix(in srgb,var(--good) 14%,var(--panel));color:var(--fg)}
+.out.pos b{color:var(--good)}
 .dl{display:grid;gap:6px}
 .dl>label{font-size:.78rem;color:var(--muted);font-weight:500}
 .dlv{display:flex;justify-content:space-between;gap:8px;font-size:.75rem;color:var(--muted)}
@@ -234,6 +253,13 @@ details.note summary{cursor:pointer;color:var(--accent);font-weight:700}
 .legend i{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
 .chart svg{width:100%;height:auto;display:block;cursor:crosshair}
 .chart svg text{fill:var(--muted);font-family:var(--mono);font-size:10px}
+@media (max-width:600px){.chart svg text{font-size:15px}}
+.moreBtn{display:none}
+@media (max-width:820px){
+  .tables:not(.all) tr.more{display:none}
+  .moreBtn{display:block;margin:4px 16px 14px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--tint);color:var(--accent);font:inherit;font-weight:700;font-size:.85rem;cursor:pointer}
+}
+@media (max-width:440px){.eq{font-size:.75rem;gap:4px;flex-wrap:nowrap}.eq b{padding:3px 7px}}
 .tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:.75rem;box-shadow:0 2px 8px rgba(0,0,0,.12);white-space:nowrap}
 .tip b{font-family:var(--mono);font-weight:500}
 .tip i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
@@ -278,7 +304,6 @@ tbody tr{cursor:pointer}
         <label>Stamp duty &amp; other costs<div class="big"><span id="sdOut">6</span><small>% = <b id="sdAmt" style="font-family:var(--mono);font-weight:500;color:var(--accent)">$60,000</b></small></div>
           <input id="sd" type="range" min="0" max="10" step="0.5" value="6"></label>
       </div>
-      <footer id="ftProp"></footer>
     </section>
 
     <section class="card">
@@ -286,25 +311,27 @@ tbody tr{cursor:pointer}
       <div class="fields">
         <label>Rent per week<div class="big">$<input id="rentTxt" class="bigin" style="width:5ch" type="text" inputmode="numeric" value="600" aria-label="Type rent per week"><small>/ week</small></div>
           <input id="rent" type="range" min="100" max="2000" step="10" value="600"></label>
-        <label>Rent increase per year<div class="big"><span id="rgOut">3</span><small>% / yr</small></div>
+        <label>Rent increase per year<div class="big"><span id="rgOut">3</span><small>% / yr</small><span class="fut">→ <b id="rgFut">$783</b>/wk by yr <span id="rgY">10</span></span></div>
           <input id="rg" type="range" min="0" max="10" step="0.5" value="3"></label>
-        <label>Property management (of rent)<div class="big"><span id="mgmtOut">6</span><small>% of rent</small></div>
+        <div class="two">
+        <label>Management<div class="big"><span id="mgmtOut">6</span><small>% of rent</small></div>
           <input id="mgmt" type="range" min="0" max="15" step="0.5" value="6"></label>
-        <label>Other expenses per year<div class="big">$<span id="otherOut">5,000</span><small>/ year</small></div>
+        <label>Other expenses<div class="big">$<span id="otherOut">5,000</span><small>/ yr</small></div>
           <input id="other" type="range" min="0" max="30000" step="500" value="5000"></label>
+        </div>
       </div>
-      <footer id="ftRent"></footer>
     </section>
 
     <section class="card">
       <header><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg><h2>Loan</h2></header>
+      <div class="rp"><div class="l">Monthly repayment</div><div class="v"><span id="emiBig">$4,796</span><small>/ month</small></div><div class="wk"><b id="emiWk">$1,107</b> / week</div><div class="m" id="emiMeta"></div></div>
+      <div class="ti2"><span id="intLbl">Interest paid by year 10 (sell year)</span><b id="intBig"></b></div>
       <div class="fields">
         <label>Interest rate<div class="big"><span id="rateOut">6</span><small>% / yr</small></div>
           <input id="rate" type="range" min="1" max="12" step="0.05" value="6"></label>
         <label>Loan term<div class="big"><span id="termOut">30</span><small>years</small></div>
           <input id="term" type="range" min="5" max="40" step="1" value="30"></label>
       </div>
-      <footer id="ftLoan"></footer>
     </section>
 
     <section class="card sell">
@@ -339,6 +366,7 @@ tbody tr{cursor:pointer}
         <thead><tr><th>Year</th><th>Interest paid</th><th>Principal paid</th><th>Loan left</th></tr></thead>
         <tbody id="tb"></tbody>
       </table></div>
+      <button type="button" class="moreBtn">Show all years</button>
     </section>
     <section class="card">
       <header><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><h2>Property value &amp; profit</h2></header>
@@ -346,6 +374,7 @@ tbody tr{cursor:pointer}
         <thead><tr><th>Year</th><th>Property value</th><th>Selling costs</th><th>Holding cost (total)</th><th>Profit if sold</th></tr></thead>
         <tbody id="tb2"></tbody>
       </table></div>
+      <button type="button" class="moreBtn">Show all years</button>
     </section>
   </div>
 
@@ -357,7 +386,7 @@ tbody tr{cursor:pointer}
   <footer class="disc" id="disclaimer">
     <h2>Disclaimer</h2>
     <p>This calculator provides general information only and is intended for illustration and educational purposes. It is not financial, investment, tax, legal or credit advice, and it does not take into account your objectives, financial situation or needs. We are not licensed financial advisers, mortgage brokers or tax agents.</p>
-    <p>All results are estimates based solely on the figures you enter and on simplified assumptions. The calculator uses fixed values throughout: property growth, interest rate, rent and expenses stay the same every year. It does not include income tax, negative gearing, depreciation, capital gains tax, land tax, vacancy periods, rent increases, inflation or changes in interest rates. Actual outcomes will differ, and past or assumed returns are not a guarantee of future results.</p>
+    <p>All results are estimates based solely on the figures you enter and on simplified assumptions. Property growth, the interest rate and expenses stay the same every year, and rent rises at the fixed rate you choose. Stamp duty and other costs are a simple percentage of the price, and Lenders Mortgage Insurance (LMI) is a rough estimate based on typical published rates; actual premiums vary by lender and insurer. The calculator does not include income tax, negative gearing, depreciation, capital gains tax, land tax, vacancy periods, inflation or changes in interest rates. Actual outcomes will differ, and past or assumed returns are not a guarantee of future results.</p>
     <p>Do not rely on this calculator to make any financial decision. Before buying, selling or borrowing, consider seeking advice from a licensed financial adviser, mortgage broker or registered tax agent. You use this calculator at your own risk, and we accept no liability for any loss arising from its use.</p>
   </footer>
 </div>
@@ -474,9 +503,10 @@ function render(){
   fit($('priceTxt'));
   $('otherOut').textContent=v('other').toLocaleString('en-AU');
   $('priceAmt').textContent=p>=1e6?'$'+parseFloat((p/1e6).toFixed(2))+'M':'$'+parseFloat((p/1e3).toFixed(1))+'K';
-  $('ftProp').innerHTML=rows([['Deposit',v('price')-d.L0],['Stamp duty & other costs',v('price')*v('sd')/100],['Initial Deposit',d.deposit]]);
-  $('ftRent').innerHTML=rows([['Rent yr 1',d.rentYr],[`Rent yr ${X} (${fmt(row.rentY/52)}/wk)`,row.rentY],['Expenses yr 1 (incl. interest)',d.totalB],d.holding>=0?['Net cost yr 1',d.holding]:['Net income yr 1',-d.holding]]);
-  $('ftLoan').innerHTML=rows([['Loan amount',d.L0],...(d.lmi?[['LMI (added to loan)',d.lmi],['Total loan',d.L]]:[]),['Monthly EMI',d.emi],['Annual repayment',d.emi*12]]);
+  $('rgFut').textContent=fmt(row.rentY/52); $('rgY').textContent=X;
+  $('emiBig').textContent=fmt(d.emi); $('emiWk').textContent=fmt(d.emi*12/52);
+  $('emiMeta').textContent=`Loan ${fmt(d.L)} · ${d.lmi?'incl. LMI '+fmt(d.lmi):'No LMI'} · ${v('term')} yrs`;
+  $('intLbl').textContent=`Interest paid by year ${X} (sell year)`; $('intBig').textContent=fmt(row.cumInt);
 
   $('vh').textContent=`If you sell after ${X} year${X>1?'s':''}`;
   const diff=row.profit-row.altGain;
@@ -527,8 +557,10 @@ function render(){
     {name:'Property profit',c:'var(--s1)',vals:d.rows.map(r=>r.profit)},
     {name:`Deposit at ${v('alt')}%`,c:'var(--s2)',vals:d.rows.map(r=>r.altGain)}],X);
 
-  $('tb').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${r.y===X?'on':''}"><td>${r.y}</td><td>${fmt(r.int)}</td><td>${fmt(r.prin)}</td><td>${fmt(r.bal)}</td></tr>`).join('');
-  $('tb2').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${r.y===X?'on':''}"><td>${r.y}</td><td>${fmt(r.val)}</td><td>${fmt(r.sellCost)}</td><td>${fmt(r.hold)}</td><td class="${cls(r.profit)}">${fmt(r.profit)}</td></tr>`).join('');
+  const rc=r=>(r.y===X?'on ':'')+(r.y>X?'more':'');
+  document.querySelectorAll('.moreBtn').forEach(b=>{b.textContent=document.querySelector('.tables').classList.contains('all')?'Show fewer years':`Show all ${d.rows.length} years`;b.hidden=X>=d.rows.length;});
+  $('tb').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${rc(r)}"><td>${r.y}</td><td>${fmt(r.int)}</td><td>${fmt(r.prin)}</td><td>${fmt(r.bal)}</td></tr>`).join('');
+  $('tb2').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${rc(r)}"><td>${r.y}</td><td>${fmt(r.val)}</td><td>${fmt(r.sellCost)}</td><td>${fmt(r.hold)}</td><td class="${cls(r.profit)}">${fmt(r.profit)}</td></tr>`).join('');
 }
 $('f').addEventListener('input',e=>{
   const id=e.target.id;
@@ -545,6 +577,7 @@ $('priceTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();
 $('rentTxt').addEventListener('blur',()=>{$('rentTxt').value=rentVal.toLocaleString('en-AU');fit($('rentTxt'));});
 $('rentTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('alt').addEventListener('input',render);
+document.querySelectorAll('.moreBtn').forEach(b=>b.addEventListener('click',()=>{document.querySelector('.tables').classList.toggle('all');render();}));
 $('lmiOn').addEventListener('change',render);
 $('hcd').open=!matchMedia('(max-width:820px)').matches;
 $('yrs2').addEventListener('input',e=>{$('yrs').value=e.target.value;render();});
