@@ -88,6 +88,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .calc{font-size:.85rem;color:var(--muted)}
 .lk{font-size:.72rem;color:var(--muted);font-weight:500}
 .lk b{font-family:var(--mono);font-weight:500;color:var(--fg)}
+.lk.init{margin-top:4px;padding:6px 10px;border-radius:6px;background:var(--hl);color:var(--fg);font-size:.8rem}
+.fields label.chk{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--fg);cursor:pointer}
+.chk input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
 .lk b.neg{font-family:inherit;color:var(--bad)}
 .calc b{font-family:var(--mono);font-weight:500;color:var(--accent)}
 .card footer{padding:10px 16px;border-top:1px dashed var(--line);display:grid;gap:3px;font-size:.8rem}
@@ -245,10 +248,10 @@ tbody tr{cursor:pointer}
       <div class="fields">
         <label>Property value<div class="big">$<input id="priceTxt" class="bigin" type="text" inputmode="numeric" value="1,000,000" aria-label="Type property value"><small id="priceAmt">$1M</small></div>
           <input id="price" type="range" min="100000" max="5000000" step="5000" value="1000000"></label>
-        <label>Stamp duty &amp; costs<div class="big"><span id="sdOut">6</span><small>% = <b id="sdAmt" style="font-family:var(--mono);font-weight:500;color:var(--accent)">$60,000</b></small></div>
+        <label>Deposit<div class="big"><span id="depOut">20</span><small>% = <b id="depAmt" style="font-family:var(--mono);font-weight:500;color:var(--accent)">$200,000</b></small></div>
+          <input id="dep" type="range" min="0" max="100" step="0.5" value="20"></label>
+        <label>Stamp duty &amp; other costs<div class="big"><span id="sdOut">6</span><small>% = <b id="sdAmt" style="font-family:var(--mono);font-weight:500;color:var(--accent)">$60,000</b></small></div>
           <input id="sd" type="range" min="0" max="10" step="0.5" value="6"></label>
-        <label>Initial Deposit<div class="big"><span id="depOut">26</span><small>% = <b id="depAmt" style="font-family:var(--mono);font-weight:500;color:var(--accent)">$260,000</b></small></div>
-          <input id="dep" type="range" min="6" max="106" step="0.5" value="26"></label>
         <label>Appreciation per year<div class="big"><span id="appOut">6</span><small>% / yr</small></div>
           <input id="app" type="range" min="0" max="15" step="0.5" value="6"></label>
       </div>
@@ -274,7 +277,8 @@ tbody tr{cursor:pointer}
       <header><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg><h2>Loan</h2></header>
       <div class="fields">
         <label>Loan amount (of value)<div class="big"><span id="lvrOut">80</span><small>% of value</small></div>
-          <input id="lvr" type="range" min="0" max="100" step="0.5" value="80"><span class="lk">⇄ Linked to initial deposit</span><span class="lk" id="lmiNote"></span></label>
+          <input id="lvr" type="range" min="0" max="100" step="0.5" value="80"><span class="lk">⇄ Linked to deposit (deposit + loan = 100%)</span><span class="lk" id="lmiNote"></span></label>
+        <label class="chk"><input type="checkbox" id="lmiOn" checked> Include Lenders Mortgage Insurance (LMI)</label>
         <label>Interest rate<div class="big"><span id="rateOut">6</span><small>% / yr</small></div>
           <input id="rate" type="range" min="1" max="12" step="0.05" value="6"></label>
         <label>Loan term<div class="big"><span id="termOut">30</span><small>years</small></div>
@@ -353,10 +357,10 @@ const rows=list=>list.map(([k,n])=>`<div><span>${k}</span><b>${fmt(n)}</b></div>
 
 function calc(){
   const P=v('price'), r=v('rate')/100, n=v('term');
-  const deposit=P*v('dep')/100;                       // B2
+  const deposit=P*(v('dep')+v('sd'))/100;             // initial deposit = deposit + stamp duty
   const rentYr=v('rent')*52;                          // E2
   const lvr=v('lvr'), L0=P*lvr/100;                   // loan before LMI
-  const lmiR=lvr<=80?0:lvr<=85?1.2:lvr<=90?2.0:4.2;    // LMI estimate, % of loan
+  const lmiR=!$('lmiOn').checked||lvr<=80?0:lvr<=85?1.2:lvr<=90?2.0:4.2; // LMI estimate, % of loan
   const lmi=L0*lmiR/100, L=L0+lmi;                    // LMI added to the loan
   const mgmt=rentYr*v('mgmt')/100;                    // E6
   const m=r/12, emi=m?L*m/(1-Math.pow(1+m,-n*12)):L/(n*12); // B9 PMT on loan amount
@@ -436,15 +440,15 @@ function render(){
   $('rateOut').textContent=v('rate').toFixed(2);
 
   $('depAmt').textContent=fmt(d.deposit);
-  $('depOut').textContent=v('dep');
+  $('depOut').textContent=v('dep'); $('depAmt').textContent=fmt(v('price')*v('dep')/100);
   $('sdOut').textContent=v('sd'); $('sdAmt').textContent=fmt(v('price')*v('sd')/100);
-  $('lmiNote').innerHTML=d.lvr>95?`<b class="neg">Most lenders don't lend above 95%.</b> LMI est. ${d.lmiR}% = ${fmt(d.lmi)}, added to loan`:d.lmi?`LMI est. ${d.lmiR}% = <b>${fmt(d.lmi)}</b>, added to loan`:'No LMI (loan is 80% or less)';
+  $('lmiNote').innerHTML=!$('lmiOn').checked?(d.lvr>80?'LMI not included':'No LMI (loan is 80% or less)'):d.lvr>95?`<b class="neg">Most lenders don't lend above 95%.</b> LMI est. ${d.lmiR}% = ${fmt(d.lmi)}, added to loan`:d.lmi?`LMI est. ${d.lmiR}% = <b>${fmt(d.lmi)}</b>, added to loan`:'No LMI (loan is 80% or less)';
   const p=v('price');
   if(document.activeElement!==$('priceTxt'))$('priceTxt').value=p.toLocaleString('en-AU');
   fit($('priceTxt'));
   $('otherOut').textContent=v('other').toLocaleString('en-AU');
   $('priceAmt').textContent=p>=1e6?'$'+parseFloat((p/1e6).toFixed(2))+'M':'$'+parseFloat((p/1e3).toFixed(1))+'K';
-  $('ftProp').innerHTML=rows([['Deposit',v('price')-d.L0],['Stamp duty & costs',v('price')*v('sd')/100],['Initial Deposit',d.deposit]]);
+  $('ftProp').innerHTML=rows([['Deposit',v('price')-d.L0],['Stamp duty & other costs',v('price')*v('sd')/100],['Initial Deposit',d.deposit]]);
   $('ftRent').innerHTML=rows([['Rent yr 1',d.rentYr],[`Rent yr ${X} (${fmt(row.rentY/52)}/wk)`,row.rentY],['Expenses yr 1 (incl. interest)',d.totalB],d.holding>=0?['Net cost yr 1',d.holding]:['Net income yr 1',-d.holding]]);
   $('ftLoan').innerHTML=rows([['Loan amount',d.L0],...(d.lmi?[['LMI (added to loan)',d.lmi],['Total loan',d.L]]:[]),['Monthly EMI',d.emi],['Annual repayment',d.emi*12]]);
 
@@ -502,8 +506,8 @@ function render(){
 }
 $('f').addEventListener('input',e=>{
   const id=e.target.id;
-  if(id==='dep')$('lvr').value=Math.min(100,Math.max(0,100-(+$('dep').value-+$('sd').value)));
-  if(id==='dep'||id==='lvr'||id==='sd'){const sd=+$('sd').value;$('dep').min=sd;$('dep').max=100+sd;$('dep').value=100-+$('lvr').value+sd;}
+  if(id==='dep')$('lvr').value=100-+$('dep').value;
+  if(id==='lvr')$('dep').value=100-+$('lvr').value;
   if(e.target.id==='price')priceVal=parseFloat(e.target.value)||0;
   if(e.target.id==='rent')rentVal=parseFloat(e.target.value)||0;
   if(e.target.id==='rentTxt'){rentVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('rent').value=rentVal;}
@@ -515,6 +519,7 @@ $('priceTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();
 $('rentTxt').addEventListener('blur',()=>{$('rentTxt').value=rentVal.toLocaleString('en-AU');fit($('rentTxt'));});
 $('rentTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('alt').addEventListener('input',render);
+$('lmiOn').addEventListener('change',render);
 $('hcd').open=!matchMedia('(max-width:820px)').matches;
 $('yrs2').addEventListener('input',e=>{$('yrs').value=e.target.value;render();});
 ['tb','tb2'].forEach(id=>$(id).addEventListener('click',e=>{const tr=e.target.closest('tr');if(tr){$('yrs').value=tr.dataset.y;render();}}));
