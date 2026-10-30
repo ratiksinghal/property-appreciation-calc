@@ -91,6 +91,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .lk.init{margin-top:4px;padding:6px 10px;border-radius:6px;background:var(--hl);color:var(--fg);font-size:.8rem}
 .fields label.chk{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--fg);cursor:pointer}
 .chk input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.fields label.chk:has(input:disabled){color:var(--muted);cursor:default}
 .lk b.neg{font-family:inherit;color:var(--bad)}
 .calc b{font-family:var(--mono);font-weight:500;color:var(--accent)}
 .card footer{padding:10px 16px;border-top:1px dashed var(--line);display:grid;gap:3px;font-size:.8rem}
@@ -278,7 +279,7 @@ tbody tr{cursor:pointer}
       <div class="fields">
         <label>Loan amount (of value)<div class="big"><span id="lvrOut">80</span><small>% of value</small></div>
           <input id="lvr" type="range" min="0" max="100" step="0.5" value="80"><span class="lk">⇄ Linked to deposit (deposit + loan = 100%)</span><span class="lk" id="lmiNote"></span></label>
-        <label class="chk"><input type="checkbox" id="lmiOn" checked> Include Lenders Mortgage Insurance (LMI)</label>
+        <label class="chk"><input type="checkbox" id="lmiOn" disabled> Include Lenders Mortgage Insurance (LMI)</label>
         <label>Interest rate<div class="big"><span id="rateOut">6</span><small>% / yr</small></div>
           <input id="rate" type="range" min="1" max="12" step="0.05" value="6"></label>
         <label>Loan term<div class="big"><span id="termOut">30</span><small>years</small></div>
@@ -422,6 +423,9 @@ function ring(a,b,X){
 }
 
 function render(){
+  const cb=$('lmiOn'), lvrOver=v('lvr')>80;        // LMI only applies above 80%
+  if(!lvrOver){cb.checked=false;cb.disabled=true;}
+  else if(cb.disabled){cb.disabled=false;cb.checked=true;}
   const d=calc();
   $('yrs').max=d.rows.length;
   const X=Math.min(Math.max(1,Math.round(v('yrs'))),d.rows.length), row=d.rows[X-1];
