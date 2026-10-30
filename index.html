@@ -86,7 +86,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .card.sell header{background:var(--hl)}
 .big{font-family:var(--mono);font-size:2rem;font-weight:500;color:var(--accent);line-height:1}
 .big small{font-family:var(--display);font-size:.85rem;color:var(--muted);margin-left:6px}
-.bigin{font:inherit;color:inherit;width:8.5ch;padding:0 2px;border:0;border-bottom:1.5px dashed var(--accent);background:transparent;border-radius:0}
+.bigin{font:inherit;color:inherit;width:8.5ch;max-width:100%;box-sizing:content-box;padding:0 2px;border:0;border-bottom:1.5px dashed var(--accent);background:transparent;border-radius:0}
 .bigin:focus{outline:none;border-bottom-style:solid;background:var(--hl)}
 .hint{font-size:.72rem;color:var(--muted)}
 
@@ -136,7 +136,13 @@ details.note summary{cursor:pointer;color:var(--accent);font-weight:700}
 .disc{border-top:1px solid var(--line);padding-top:16px;font-size:.78rem;color:var(--muted);line-height:1.55}
 .disc h2{margin:0 0 6px;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--fg)}
 .disc p{margin:0 0 8px;max-width:95ch}
-.hc{margin-top:16px;padding:14px;background:var(--tint);border-radius:8px;display:grid;gap:10px}
+.hcd{margin-top:16px;background:var(--tint);border-radius:8px}
+.hcd summary{cursor:pointer;list-style:none;display:flex;justify-content:flex-start;align-items:center;gap:10px;padding:12px 14px;font-size:.9rem;font-weight:700}
+.hcd summary::-webkit-details-marker{display:none}
+.hcd .tg{font-style:normal;font-size:.78rem;color:var(--accent)}
+.hcd .tg::after{content:"Show \25BE"}
+.hcd[open] .tg::after{content:"Hide \25B4"}
+.hc{padding:0 14px 14px;display:grid;gap:10px}
 .hc h3{margin:0;font-size:.9rem}
 .hcgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:center}
 @media (max-width:700px){.hcgrid{grid-template-columns:1fr}}
@@ -149,11 +155,21 @@ details.note summary{cursor:pointer;color:var(--accent);font-weight:700}
 .bar{display:flex;height:28px;gap:2px;container-type:inline-size}
 .bar span{border-radius:4px;min-width:2px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;font-family:var(--mono);font-size:.72rem;font-weight:500;color:#fff}
 .bar span.dk{color:#1a1a19}
+.vb{display:flex;justify-content:center;align-items:flex-end;gap:18px}
+.vcol{display:grid;justify-items:center;gap:6px}
+.varea{height:164px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+.varea b{font-family:var(--mono);font-size:.8rem;font-weight:500}
+.vcol small{font-size:.75rem;color:var(--muted)}
+.vstack{width:64px;display:flex;flex-direction:column-reverse;gap:2px;min-height:2px}
+.vstack span{border-radius:4px;min-height:2px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:var(--mono);font-size:.68rem;font-weight:500;color:#fff}
+.vstack span.dk{color:#1a1a19}
+.vstack span.gap{border:1.5px dashed var(--s2);background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--s2) 30%,transparent) 0 5px,transparent 5px 10px)}
+.vstack span.sur{background:color-mix(in srgb,var(--good) 35%,transparent);border:1.5px dashed var(--good)}
 
 /* charts */
 .charts{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media (max-width:1000px){.charts{grid-template-columns:1fr}}
-.vgrid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:20px;align-items:start}
+.vgrid{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:900px){.vgrid{grid-template-columns:1fr}}
 .cmp{display:grid;gap:16px;min-width:0;padding-left:20px;border-left:1px solid var(--line)}
 @media (max-width:900px){.cmp{padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:16px}}
@@ -161,6 +177,12 @@ details.note summary{cursor:pointer;color:var(--accent);font-weight:700}
 .opt{display:grid;gap:4px}
 .opt span{font-size:.78rem;color:var(--muted)}
 .opt b{font-family:var(--mono);font-size:1.25rem;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.1}
+.ring{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ring svg{width:120px;height:120px;flex:none}
+.ring .rn{fill:var(--fg);font-family:var(--mono);font-size:20px;font-weight:500}
+.ring .ru{fill:var(--muted);font-size:10px}
+.rl{display:grid;gap:12px;min-width:0;flex:1}
+.opt span i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 .opt .track{height:6px;border-radius:3px;background:var(--line)}
 .opt .track i{display:block;height:100%;border-radius:3px}
 .opt small{font-size:.72rem;color:var(--muted)}
@@ -209,9 +231,9 @@ tbody tr{cursor:pointer}
     <section class="card">
       <header><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><h2>Property</h2></header>
       <div class="fields">
-        <label>Property value<div class="big">$<input id="priceTxt" class="bigin" type="text" inputmode="numeric" value="750,000" aria-label="Type property value"><small id="priceAmt">$750K</small></div>
-          <input id="price" type="range" min="100000" max="5000000" step="5000" value="750000"></label>
-        <label>Upfront cash (deposit, stamp duty, costs)<div class="big"><span id="depOut">26</span><small>% = <b id="depAmt" style="font-family:var(--mono);font-weight:500;color:var(--accent)">$195,000</b></small></div>
+        <label>Property value<div class="big">$<input id="priceTxt" class="bigin" type="text" inputmode="numeric" value="1,000,000" aria-label="Type property value"><small id="priceAmt">$1M</small></div>
+          <input id="price" type="range" min="100000" max="5000000" step="5000" value="1000000"></label>
+        <label>Initial Deposit (deposit, stamp duty, costs)<div class="big"><span id="depOut">26</span><small>% = <b id="depAmt" style="font-family:var(--mono);font-weight:500;color:var(--accent)">$195,000</b></small></div>
           <input id="dep" type="range" min="0" max="50" step="0.5" value="26"></label>
         <label>Appreciation per year<div class="big"><span id="appOut">6</span><small>% / yr</small></div>
           <input id="app" type="range" min="0" max="15" step="0.5" value="6"></label>
@@ -261,7 +283,7 @@ tbody tr{cursor:pointer}
   <section class="panel verdict"><div class="vgrid"><div>
     <h2 id="vh">If you sell after 10 years</h2>
     <div class="stats" id="stats"></div>
-    <div class="hc" id="hc"></div>
+    <details class="hcd" id="hcd"><summary><span id="hcs">Holding cost breakdown</span><em class="tg"></em></summary><div class="hc" id="hc"></div></details>
   </div><aside class="cmp">
     <h3>Property vs deposit invested</h3>
     <label class="alt">Or invest the upfront cash elsewhere at<div class="big"><span id="altOut">8</span><small>% / yr</small></div>
@@ -308,7 +330,8 @@ tbody tr{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-let priceVal=750000, rentVal=600;
+let priceVal=1000000, rentVal=600;
+const fit=el=>{el.style.width=(Math.max(el.value.length,3)+0.6)+'ch';};
 const v=id=>id==='price'?priceVal:id==='rent'?rentVal:(parseFloat($(id).value)||0);
 const fmt=n=>(n<0?'-$':'$')+Math.round(Math.abs(n)).toLocaleString('en-AU');
 const cls=n=>n>=0?'pos':'neg';
@@ -373,6 +396,11 @@ function chart(el,title,series,X){
   svg.addEventListener('click',e=>{$('yrs').value=yearAt(e);render();});
 }
 
+function ring(a,b,X){
+  const arc=(r,f,c)=>{const C=2*Math.PI*r;return `<circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--line)" stroke-width="11"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="${c}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${Math.max(0,f)*C} ${C}" transform="rotate(-90 60 60)"/>`;};
+  return `<svg viewBox="0 0 120 120" role="img" aria-label="Property profit compared with deposit invested">${arc(50,a,'var(--s1)')}${arc(35,b,'var(--s2)')}<text x="60" y="58" text-anchor="middle" class="rn">${X}</text><text x="60" y="73" text-anchor="middle" class="ru">year${X>1?'s':''}</text></svg>`;
+}
+
 function render(){
   const d=calc();
   $('yrs').max=d.rows.length;
@@ -384,6 +412,7 @@ function render(){
   $('altOut').textContent=v('alt');
   $('mgmtOut').textContent=v('mgmt');
   if(document.activeElement!==$('rentTxt'))$('rentTxt').value=rentVal.toLocaleString('en-AU');
+  fit($('rentTxt'));
   $('rgOut').textContent=v('rg');
   $('lvrOut').textContent=v('lvr');
   $('termOut').textContent=v('term');
@@ -394,6 +423,7 @@ function render(){
   $('depOut').textContent=v('dep');
   const p=v('price');
   if(document.activeElement!==$('priceTxt'))$('priceTxt').value=p.toLocaleString('en-AU');
+  fit($('priceTxt'));
   $('otherOut').textContent=v('other').toLocaleString('en-AU');
   $('priceAmt').textContent=p>=1e6?'$'+parseFloat((p/1e6).toFixed(2))+'M':'$'+parseFloat((p/1e3).toFixed(1))+'K';
   const depOnly=v('price')-d.L, extra=d.deposit-depOnly;
@@ -413,7 +443,7 @@ function render(){
         ${li('Sale price',row.val)}${li(`− Selling costs (${v('sellc')}%)`,-row.sellCost)}${li('− Loan paid off',-row.bal)}
         <div class="tot"><span>Cash from sale</span><b>${fmt(cashSale)}</b></div></div>
       <div class="box put"><h4><i></i>What you put in</h4>
-        ${li('Upfront cash',d.deposit)}${li('Principal repaid',row.cumPrin)}${li(row.hold>=0?'Holding cost':'Net rental income',row.hold)}
+        ${li('Initial Deposit',d.deposit)}${li('Principal repaid',row.cumPrin)}${li(row.hold>=0?'Holding cost':'Net rental income',row.hold)}
         <div class="tot"><span>Total put in</span><b>${fmt(putIn)}</b></div></div>
     </div>
     <div class="eq"><b class="e1">${fmt(cashSale)}</b>−<b class="e2">${fmt(putIn)}</b>=<b class="e3 ${row.profit<0?'neg':''}">${fmt(row.profit)}</b></div>`;
@@ -421,26 +451,25 @@ function render(){
   const ln=(k,n)=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`;
   const top=Math.max(Math.abs(row.profit),Math.abs(row.altGain))||1, w=n=>Math.max(0,n)/top*100;
   $('cmp').innerHTML=`
-    <div class="opt"><span>Property profit</span><b class="${cls(row.profit)}">${fmt(row.profit)}</b>
-      <div class="track"><i style="width:${w(row.profit)}%;background:var(--s1)"></i></div></div>
-    <div class="opt"><span>Deposit at ${v('alt')}%</span><b>${fmt(row.altGain)}</b>
-      <div class="track"><i style="width:${w(row.altGain)}%;background:var(--s2)"></i></div>
-      <small>${fmt(d.deposit)} grows to ${fmt(d.deposit+row.altGain)}</small></div>
+    <div class="ring">${ring(w(row.profit)/100,w(row.altGain)/100,X)}
+      <div class="rl">
+        <div class="opt"><span><i style="background:var(--s1)"></i>Property profit</span><b class="${cls(row.profit)}">${fmt(row.profit)}</b></div>
+        <div class="opt"><span><i style="background:var(--s2)"></i>Deposit at ${v('alt')}%</span><b>${fmt(row.altGain)}</b>
+          <small>${fmt(d.deposit)} grows to ${fmt(d.deposit+row.altGain)}</small></div>
+      </div></div>
     <div class="res ${diff>=0?'win':'lose'}">${diff>=0?'Property':'Deposit'} ahead by <b>${fmt(Math.abs(diff))}</b>
       <small>${over?`Property overtakes from year ${over.y}`:'Property never overtakes within the loan term'}</small></div>`;
   const parts=[['Loan interest',row.cumInt,'var(--s1)'],['Property management',row.cumMgmt,'var(--s2)'],['Other expenses',v('other')*X,'var(--s4)']];
   const rentT=row.cumRent, costT=row.cumInt+row.cumMgmt+v('other')*X, mx=Math.max(rentT,costT)||1;
-  $('hc').innerHTML=`<h3>Holding cost breakdown (${X} yr${X>1?'s':''})</h3>
+  $('hcs').textContent=`Holding cost breakdown (${X} yr${X>1?'s':''})`;
+  $('hc').innerHTML=`
     <div class="hcgrid">
       <div class="hcl">${parts.map(([k,n,c])=>`<div><span><i style="background:${c}"></i>${k}</span><b>${fmt(n)}</b></div>`).join('')}
         <div><span><i style="background:var(--s3)"></i>Less rent received</span><b>−${fmt(rentT)}</b></div>
         <div class="tot"><span>${row.hold>=0?'Total holding cost':'Net rental income'}</span><b>${fmt(Math.abs(row.hold))}</b></div></div>
-      <div class="bars">
-        <div>Costs ${fmt(costT)}</div>
-        <div class="bar">${parts.map(([k,n,c])=>`<span title="${k}: ${fmt(n)}" class="${c.includes('s4')?'dk':''}" style="background:${c};width:${n/mx*100}%">${n/mx>0.12?fmt(n):''}</span>`).join('')}</div>
-        <div>Rent ${fmt(rentT)}</div>
-        <div class="bar"><span title="Rent: ${fmt(rentT)}" style="background:var(--s3);width:${rentT/mx*100}%">${fmt(rentT)}</span></div>
-        <div>${row.hold>=0?'The gap between the two bars is what you pay out of pocket.':'Rent covers all costs; the extra adds to your profit.'}</div>
+      <div class="vb">
+        <div class="vcol"><div class="varea"><b>${short(costT)}</b><div class="vstack" style="height:${costT/mx*140}px">${parts.map(([k,n,c])=>`<span title="${k}: ${fmt(n)}" class="${c.includes('s4')?'dk':''}" style="background:${c};flex:${n} 1 0">${n/mx>0.14?short(n):''}</span>`).join('')}</div></div><small>Costs</small></div>
+        <div class="vcol"><div class="varea"><b>${short(rentT)}</b><div class="vstack" style="height:${rentT/mx*140}px"><span title="Rent: ${fmt(rentT)}" style="background:var(--s3);flex:1">${short(rentT)}</span></div></div><small>Rent</small></div>
       </div>
     </div>`;
 
@@ -461,11 +490,12 @@ $('f').addEventListener('input',e=>{
   if(e.target.id==='priceTxt'){priceVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('price').value=priceVal;}
   render();
 });
-$('priceTxt').addEventListener('blur',()=>{$('priceTxt').value=priceVal.toLocaleString('en-AU');});
+$('priceTxt').addEventListener('blur',()=>{$('priceTxt').value=priceVal.toLocaleString('en-AU');fit($('priceTxt'));});
 $('priceTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
-$('rentTxt').addEventListener('blur',()=>{$('rentTxt').value=rentVal.toLocaleString('en-AU');});
+$('rentTxt').addEventListener('blur',()=>{$('rentTxt').value=rentVal.toLocaleString('en-AU');fit($('rentTxt'));});
 $('rentTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('alt').addEventListener('input',render);
+$('hcd').open=!matchMedia('(max-width:820px)').matches;
 $('yrs2').addEventListener('input',e=>{$('yrs').value=e.target.value;render();});
 ['tb','tb2'].forEach(id=>$(id).addEventListener('click',e=>{const tr=e.target.closest('tr');if(tr){$('yrs').value=tr.dataset.y;render();}}));
 render();
