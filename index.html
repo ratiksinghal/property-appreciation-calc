@@ -265,8 +265,13 @@ details.note summary{cursor:pointer;color:var(--accent);font-weight:700}
 .tip i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
 
 /* table */
-.tables{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:20px;align-items:start}
-@media (max-width:1000px){.tables{grid-template-columns:1fr}}
+.tables{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,2fr) minmax(0,5fr);gap:20px;align-items:start}
+.tables th,.tables td{height:30px;padding-top:0;padding-bottom:0}
+.tables th:first-child,.tables td:first-child{text-align:left}
+.tables .yc+th,.tables .yc+td{text-align:right}
+@media (min-width:1101px){#tb3 td,#tb3+thead th,.tables .card:nth-child(2) th{padding-left:4px;padding-right:12px}}
+@media (min-width:1101px){.tables .yc{display:none}}
+@media (max-width:1100px){.tables{grid-template-columns:1fr}}
 .tables{gap:16px}
 .tables .tbl{overflow-x:auto;padding:4px 8px 8px}
 .tables th{background:var(--panel)}
@@ -363,15 +368,23 @@ tbody tr{cursor:pointer}
     <section class="card">
       <header><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg><h2>Loan repayments</h2></header>
       <div class="tbl"><table>
-        <thead><tr><th>Year</th><th>Interest paid</th><th>Principal paid</th><th>Loan left</th></tr></thead>
+        <thead><tr><th>Year</th><th>Interest</th><th>Principal</th><th>Loan left</th></tr></thead>
         <tbody id="tb"></tbody>
+      </table></div>
+      <button type="button" class="moreBtn">Show all years</button>
+    </section>
+    <section class="card">
+      <header><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9"/><path d="M17 6l3 3"/><path d="M15 8l2 2"/></svg><h2>Rent</h2></header>
+      <div class="tbl"><table>
+        <thead><tr><th class="yc">Year</th><th>Rent / wk</th><th>Net rent</th></tr></thead>
+        <tbody id="tb3"></tbody>
       </table></div>
       <button type="button" class="moreBtn">Show all years</button>
     </section>
     <section class="card">
       <header><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><h2>Property value &amp; profit</h2></header>
       <div class="tbl"><table>
-        <thead><tr><th>Year</th><th>Property value</th><th>Selling costs</th><th>Holding cost (total)</th><th>Profit if sold</th></tr></thead>
+        <thead><tr><th class="yc">Year</th><th>Value</th><th>Selling costs</th><th>Holding cost</th><th>Profit if sold</th></tr></thead>
         <tbody id="tb2"></tbody>
       </table></div>
       <button type="button" class="moreBtn">Show all years</button>
@@ -560,7 +573,8 @@ function render(){
   const rc=r=>(r.y===X?'on ':'')+(r.y>X?'more':'');
   document.querySelectorAll('.moreBtn').forEach(b=>{b.textContent=document.querySelector('.tables').classList.contains('all')?'Show fewer years':`Show all ${d.rows.length} years`;b.hidden=X>=d.rows.length;});
   $('tb').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${rc(r)}"><td>${r.y}</td><td>${fmt(r.int)}</td><td>${fmt(r.prin)}</td><td>${fmt(r.bal)}</td></tr>`).join('');
-  $('tb2').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${rc(r)}"><td>${r.y}</td><td>${fmt(r.val)}</td><td>${fmt(r.sellCost)}</td><td>${fmt(r.hold)}</td><td class="${cls(r.profit)}">${fmt(r.profit)}</td></tr>`).join('');
+  $('tb2').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${rc(r)}"><td class="yc">${r.y}</td><td>${fmt(r.val)}</td><td>${fmt(r.sellCost)}</td><td>${fmt(r.hold)}</td><td class="${cls(r.profit)}">${fmt(r.profit)}</td></tr>`).join('');
+  $('tb3').innerHTML=d.rows.map(r=>`<tr data-y="${r.y}" class="${rc(r)}"><td class="yc">${r.y}</td><td>${fmt(r.rentY/52)}</td><td>${fmt(r.rentY*(1-v('mgmt')/100)-v('other'))}</td></tr>`).join('');
 }
 $('f').addEventListener('input',e=>{
   const id=e.target.id;
@@ -581,7 +595,7 @@ document.querySelectorAll('.moreBtn').forEach(b=>b.addEventListener('click',()=>
 $('lmiOn').addEventListener('change',render);
 $('hcd').open=!matchMedia('(max-width:820px)').matches;
 $('yrs2').addEventListener('input',e=>{$('yrs').value=e.target.value;render();});
-['tb','tb2'].forEach(id=>$(id).addEventListener('click',e=>{const tr=e.target.closest('tr');if(tr){$('yrs').value=tr.dataset.y;render();}}));
+['tb','tb2','tb3'].forEach(id=>$(id).addEventListener('click',e=>{const tr=e.target.closest('tr');if(tr){$('yrs').value=tr.dataset.y;render();}}));
 render();
 </script>
 
