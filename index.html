@@ -30,28 +30,38 @@ body{background:var(--bg);color:var(--fg);font-family:var(--display);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px}
 .mbar{display:none}
 @media (max-width:820px){
-  body{padding-bottom:96px}
+  body{padding-bottom:120px}
   .inputs .card footer{display:none}
   .mbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px 12px;position:fixed;left:0;right:0;bottom:0;z-index:20;
-    background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.08);
-    padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    background:#0f5c47;border-top:3px solid #f5c451;box-shadow:0 -6px 20px rgba(0,0,0,.22);border-radius:16px 16px 0 0;
+    padding-top:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));
     padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-  .mbar label{font-size:.8rem;color:var(--muted);white-space:nowrap}
-  .mbar label b{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent)}
-  .mbar input{width:100%;min-width:0;accent-color:var(--accent)}
-  .mbp{text-align:right;line-height:1.1}
-  .mbp span{display:block;font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-  .mbp b{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--good)}
-  .mbp b.neg{color:var(--bad)}
+  .mbar label{font-size:.85rem;color:rgba(255,255,255,.85);white-space:nowrap;font-weight:700}
+  .mbar label b{font-family:var(--mono);font-size:1.6rem;font-weight:500;color:#f5c451;margin:0 2px}
+  .mbar input{width:100%;min-width:0;height:28px;-webkit-appearance:none;appearance:none;background:transparent}
+  .mbar input::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:rgba(255,255,255,.3)}
+  .mbar input::-moz-range-track{height:8px;border-radius:4px;background:rgba(255,255,255,.3)}
+  .mbar input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#f5c451;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+  .mbar input::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#f5c451;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+  .mbar input:focus-visible{outline:2px solid #f5c451;outline-offset:2px;border-radius:4px}
+  .mbp{text-align:right;line-height:1.1;background:#fff;border-radius:12px;padding:6px 12px}
+  .mbp span{display:block;font-size:.66rem;color:#5b6964;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .mbp b{font-family:var(--mono);font-size:1.35rem;font-weight:500;color:#13794f}
+  .mbp b.neg{color:#b4372b}
 }
-@media (max-width:420px){body{padding-bottom:124px}.mbar{grid-template-columns:1fr auto}.mbar input{grid-column:1/-1;grid-row:2}}
+@media (max-width:420px){body{padding-bottom:150px}.mbar{grid-template-columns:1fr auto}.mbar input{grid-column:1/-1;grid-row:2}}
 .wrap{max-width:1180px;margin:0 auto;display:grid;gap:20px}
 h1{font-size:1.6rem;font-weight:800;margin:0;text-wrap:balance}
 .sub{color:var(--muted);margin:4px 0 0}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
 
 /* input cards */
-.inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.inputs{grid-template-columns:minmax(0,1fr)}}
+.card.sell{grid-column:1/-1;flex-direction:row}
+.card.sell header{border-bottom:0;border-right:1px solid var(--line);min-width:190px}
+.card.sell .fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 32px}
+@media (max-width:700px){.card.sell{flex-direction:column}.card.sell header{border-right:0;border-bottom:1px solid var(--line)}.card.sell .fields{grid-template-columns:minmax(0,1fr)}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 .card header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--tint);border-bottom:1px solid var(--line)}
 .card header svg{width:20px;height:20px;flex:none;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -212,7 +222,7 @@ tbody tr{cursor:pointer}
     <section class="card">
       <header><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9"/><path d="M17 6l3 3"/><path d="M15 8l2 2"/></svg><h2>Rent &amp; expenses</h2></header>
       <div class="fields">
-        <label>Rent per week<div class="big">$<span id="rentOut">600</span><small>/ week</small></div>
+        <label>Rent per week<div class="big">$<input id="rentTxt" class="bigin" style="width:5ch" type="text" inputmode="numeric" value="600" aria-label="Type rent per week"><small>/ week</small></div>
           <input id="rent" type="range" min="100" max="2000" step="10" value="600"></label>
         <label>Rent increase per year<div class="big"><span id="rgOut">3</span><small>% / yr</small></div>
           <input id="rg" type="range" min="0" max="10" step="0.5" value="3"></label>
@@ -298,8 +308,8 @@ tbody tr{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-let priceVal=750000;
-const v=id=>id==='price'?priceVal:(parseFloat($(id).value)||0);
+let priceVal=750000, rentVal=600;
+const v=id=>id==='price'?priceVal:id==='rent'?rentVal:(parseFloat($(id).value)||0);
 const fmt=n=>(n<0?'-$':'$')+Math.round(Math.abs(n)).toLocaleString('en-AU');
 const cls=n=>n>=0?'pos':'neg';
 const rows=list=>list.map(([k,n])=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`).join('');
@@ -373,7 +383,7 @@ function render(){
   $('appOut').textContent=v('app');
   $('altOut').textContent=v('alt');
   $('mgmtOut').textContent=v('mgmt');
-  $('rentOut').textContent=v('rent').toLocaleString('en-AU');
+  if(document.activeElement!==$('rentTxt'))$('rentTxt').value=rentVal.toLocaleString('en-AU');
   $('rgOut').textContent=v('rg');
   $('lvrOut').textContent=v('lvr');
   $('termOut').textContent=v('term');
@@ -446,11 +456,15 @@ function render(){
 }
 $('f').addEventListener('input',e=>{
   if(e.target.id==='price')priceVal=parseFloat(e.target.value)||0;
+  if(e.target.id==='rent')rentVal=parseFloat(e.target.value)||0;
+  if(e.target.id==='rentTxt'){rentVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('rent').value=rentVal;}
   if(e.target.id==='priceTxt'){priceVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('price').value=priceVal;}
   render();
 });
 $('priceTxt').addEventListener('blur',()=>{$('priceTxt').value=priceVal.toLocaleString('en-AU');});
 $('priceTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
+$('rentTxt').addEventListener('blur',()=>{$('rentTxt').value=rentVal.toLocaleString('en-AU');});
+$('rentTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('alt').addEventListener('input',render);
 $('yrs2').addEventListener('input',e=>{$('yrs').value=e.target.value;render();});
 ['tb','tb2'].forEach(id=>$(id).addEventListener('click',e=>{const tr=e.target.closest('tr');if(tr){$('yrs').value=tr.dataset.y;render();}}));
