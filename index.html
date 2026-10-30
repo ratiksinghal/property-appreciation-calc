@@ -28,6 +28,22 @@
   --accent:#4cc39a; --good:#5fd39f; --bad:#f08072; --hl:#1d3029; --tint:#1c2622; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; color-scheme:dark}
 body{background:var(--bg);color:var(--fg);font-family:var(--display);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px}
+.mbar{display:none}
+@media (max-width:820px){
+  body{padding-bottom:96px}
+  .mbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px 12px;position:fixed;left:0;right:0;bottom:0;z-index:20;
+    background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.08);
+    padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .mbar label{font-size:.8rem;color:var(--muted);white-space:nowrap}
+  .mbar label b{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent)}
+  .mbar input{width:100%;min-width:0;accent-color:var(--accent)}
+  .mbp{text-align:right;line-height:1.1}
+  .mbp span{display:block;font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .mbp b{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--good)}
+  .mbp b.neg{color:var(--bad)}
+}
+@media (max-width:420px){body{padding-bottom:124px}.mbar{grid-template-columns:1fr auto}.mbar input{grid-column:1/-1;grid-row:2}}
 .wrap{max-width:1180px;margin:0 auto;display:grid;gap:20px}
 h1{font-size:1.6rem;font-weight:800;margin:0;text-wrap:balance}
 .sub{color:var(--muted);margin:4px 0 0}
@@ -100,7 +116,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .pos{color:var(--good)} .neg{color:var(--bad)}
 .note{margin:12px 0 0;font-size:.85rem;color:var(--muted)}
 .sub{line-height:1.5}
-label.alt{padding:10px 12px;border-radius:8px;background:color-mix(in srgb,var(--s2) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--s2) 30%,var(--panel))}
+label.alt{display:grid;gap:4px;font-size:.78rem;color:var(--muted);font-weight:500;padding:10px 12px;border-radius:8px;background:color-mix(in srgb,var(--s2) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--s2) 30%,var(--panel))}
 label.alt .big{color:var(--s2)}
 label.alt input[type=range]{accent-color:var(--s2)}
 details.note summary{cursor:pointer;color:var(--accent);font-weight:700}
@@ -197,6 +213,8 @@ tbody tr{cursor:pointer}
       <div class="fields">
         <label>Rent per week<div class="big">$<span id="rentOut">600</span><small>/ week</small></div>
           <input id="rent" type="range" min="100" max="2000" step="10" value="600"></label>
+        <label>Rent increase per year<div class="big"><span id="rgOut">3</span><small>% / yr</small></div>
+          <input id="rg" type="range" min="0" max="10" step="0.5" value="3"></label>
         <label>Property management (of rent)<div class="big"><span id="mgmtOut">6</span><small>% of rent</small></div>
           <input id="mgmt" type="range" min="0" max="15" step="0.5" value="6"></label>
         <label>Other expenses per year<div class="big">$<span id="otherOut">5,000</span><small>/ year</small></div>
@@ -225,8 +243,6 @@ tbody tr{cursor:pointer}
           <input id="yrs" type="range" min="1" max="30" value="10"></label>
         <label>Selling costs (agent, legal, marketing)<div class="big"><span id="sellcOut">2.5</span><small>% of sale</small></div>
           <input id="sellc" type="range" min="0" max="6" step="0.1" value="2.5"></label>
-        <label class="alt">Or invest the upfront cash elsewhere at<div class="big"><span id="altOut">8</span><small>% / yr</small></div>
-          <input id="alt" type="range" min="0" max="15" step="0.5" value="8"></label>
       </div>
     </section>
   </form>
@@ -235,7 +251,12 @@ tbody tr{cursor:pointer}
     <h2 id="vh">If you sell after 10 years</h2>
     <div class="stats" id="stats"></div>
     <div class="hc" id="hc"></div>
-  </div><aside class="cmp" id="cmp"></aside></div></section>
+  </div><aside class="cmp">
+    <h3>Property vs deposit invested</h3>
+    <label class="alt">Or invest the upfront cash elsewhere at<div class="big"><span id="altOut">8</span><small>% / yr</small></div>
+      <input id="alt" type="range" min="0" max="15" step="0.5" value="8"></label>
+    <div id="cmp" style="display:grid;gap:16px"></div>
+  </aside></div></section>
 
 
   <div class="tables">
@@ -268,6 +289,12 @@ tbody tr{cursor:pointer}
   </footer>
 </div>
 
+<div class="mbar" role="region" aria-label="Sell year and profit">
+  <label for="yrs2">Sell after <b id="mbY">10</b> yrs</label>
+  <input id="yrs2" type="range" min="1" max="30" value="10">
+  <div class="mbp"><span>Profit</span><b id="mbP">$0</b></div>
+</div>
+
 <script>
 const $=id=>document.getElementById(id);
 let priceVal=750000;
@@ -284,18 +311,20 @@ function calc(){
   const mgmt=rentYr*v('mgmt')/100;                    // E6
   const m=r/12, emi=m?L*m/(1-Math.pow(1+m,-n*12)):L/(n*12); // B9 PMT on loan amount
   const g=Math.pow(1+m,12), f=m?(g-1)/m:12;
-  const out=[]; let bal=L, cumInt=0;
+  const out=[]; let bal=L, cumInt=0, cumRent=0, cumMgmt=0;
   for(let y=1;y<=Math.max(n,1);y++){
     const open=bal; bal=Math.max(0,open*g-emi*f);     // L column
     const prin=open-bal, int=emi*12-prin;
     const val=Math.ceil(P*Math.pow(1+v('app')/100,y)); // B15
     const sellCost=val*v('sellc')/100;                // selling costs on sale price
     cumInt+=int;                                      // real interest paid so far
+    const rentY=rentYr*Math.pow(1+v('rg')/100,y-1);   // rent grows each year
+    cumRent+=rentY; cumMgmt+=rentY*v('mgmt')/100;     // mgmt fee follows rent
     const cumPrin=L-bal;                              // principal repaid from your pocket
-    const hold=cumInt+(mgmt+v('other')-rentYr)*y;     // net holding cost (negative = net income)
+    const hold=cumInt+cumMgmt+v('other')*y-cumRent;   // net holding cost (negative = net income)
     const profit=val-sellCost-deposit-bal-cumPrin-hold;
     const altGain=deposit*Math.pow(1+v('alt')/100,y)-deposit; // E15
-    out.push({y,val,sellCost,bal,prin,int,cumInt,cumPrin,hold,profit,altGain});
+    out.push({y,val,sellCost,bal,prin,int,cumInt,cumPrin,cumRent,cumMgmt,rentY,hold,profit,altGain});
   }
   const interest=out[0].int, totalB=interest+v('other')+mgmt, holding=totalB-rentYr; // year 1
   return {L,deposit,rentYr,interest,mgmt,totalB,holding,emi,rows:out};
@@ -338,10 +367,13 @@ function render(){
   $('yrs').max=d.rows.length;
   const X=Math.min(Math.max(1,Math.round(v('yrs'))),d.rows.length), row=d.rows[X-1];
   $('yrsOut').textContent=X;
+  $('yrs2').max=d.rows.length; $('yrs2').value=X; $('mbY').textContent=X;
+  $('mbP').textContent=fmt(row.profit); $('mbP').className=row.profit<0?'neg':'';
   $('appOut').textContent=v('app');
   $('altOut').textContent=v('alt');
   $('mgmtOut').textContent=v('mgmt');
   $('rentOut').textContent=v('rent').toLocaleString('en-AU');
+  $('rgOut').textContent=v('rg');
   $('lvrOut').textContent=v('lvr');
   $('termOut').textContent=v('term');
   $('sellcOut').textContent=v('sellc');
@@ -355,7 +387,7 @@ function render(){
   $('priceAmt').textContent=p>=1e6?'$'+parseFloat((p/1e6).toFixed(2))+'M':'$'+parseFloat((p/1e3).toFixed(1))+'K';
   const depOnly=v('price')-d.L, extra=d.deposit-depOnly;
   $('ftProp').innerHTML=rows(extra>=0?[['Deposit',depOnly],['Stamp duty & costs',extra],['Upfront cash',d.deposit]]:[['Upfront cash',d.deposit]]);
-  $('ftRent').innerHTML=rows([['Rent / yr',d.rentYr],['Expenses yr 1 (incl. interest)',d.totalB],d.holding>=0?['Net cost yr 1',d.holding]:['Net income yr 1',-d.holding]]);
+  $('ftRent').innerHTML=rows([['Rent yr 1',d.rentYr],[`Rent yr ${X} (${fmt(row.rentY/52)}/wk)`,row.rentY],['Expenses yr 1 (incl. interest)',d.totalB],d.holding>=0?['Net cost yr 1',d.holding]:['Net income yr 1',-d.holding]]);
   $('ftLoan').innerHTML=rows([['Loan amount',d.L],['Monthly EMI',d.emi],['Annual repayment',d.emi*12]]);
 
   $('vh').textContent=`If you sell after ${X} year${X>1?'s':''}`;
@@ -378,7 +410,6 @@ function render(){
   const ln=(k,n)=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`;
   const top=Math.max(Math.abs(row.profit),Math.abs(row.altGain))||1, w=n=>Math.max(0,n)/top*100;
   $('cmp').innerHTML=`
-    <h3>Property vs deposit invested</h3>
     <div class="opt"><span>Property profit</span><b class="${cls(row.profit)}">${fmt(row.profit)}</b>
       <div class="track"><i style="width:${w(row.profit)}%;background:var(--s1)"></i></div></div>
     <div class="opt"><span>Deposit at ${v('alt')}%</span><b>${fmt(row.altGain)}</b>
@@ -386,8 +417,8 @@ function render(){
       <small>${fmt(d.deposit)} grows to ${fmt(d.deposit+row.altGain)}</small></div>
     <div class="res ${diff>=0?'win':'lose'}">${diff>=0?'Property':'Deposit'} ahead by <b>${fmt(Math.abs(diff))}</b>
       <small>${over?`Property overtakes from year ${over.y}`:'Property never overtakes within the loan term'}</small></div>`;
-  const parts=[['Loan interest',row.cumInt,'var(--s1)'],['Property management',d.mgmt*X,'var(--s2)'],['Other expenses',v('other')*X,'var(--s4)']];
-  const rentT=d.rentYr*X, costT=row.cumInt+(d.mgmt+v('other'))*X, mx=Math.max(rentT,costT)||1;
+  const parts=[['Loan interest',row.cumInt,'var(--s1)'],['Property management',row.cumMgmt,'var(--s2)'],['Other expenses',v('other')*X,'var(--s4)']];
+  const rentT=row.cumRent, costT=row.cumInt+row.cumMgmt+v('other')*X, mx=Math.max(rentT,costT)||1;
   $('hc').innerHTML=`<h3>Holding cost breakdown (${X} yr${X>1?'s':''})</h3>
     <div class="hcgrid">
       <div class="hcl">${parts.map(([k,n,c])=>`<div><span><i style="background:${c}"></i>${k}</span><b>${fmt(n)}</b></div>`).join('')}
@@ -419,6 +450,8 @@ $('f').addEventListener('input',e=>{
 });
 $('priceTxt').addEventListener('blur',()=>{$('priceTxt').value=priceVal.toLocaleString('en-AU');});
 $('priceTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
+$('alt').addEventListener('input',render);
+$('yrs2').addEventListener('input',e=>{$('yrs').value=e.target.value;render();});
 ['tb','tb2'].forEach(id=>$(id).addEventListener('click',e=>{const tr=e.target.closest('tr');if(tr){$('yrs').value=tr.dataset.y;render();}}));
 render();
 </script>
