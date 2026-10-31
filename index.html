@@ -473,7 +473,7 @@ tbody tr{cursor:pointer}
         <label>Rent increase per year<div class="big"><span id="rgOut">3</span><small>% / yr</small><span class="fut">→ <b id="rgFut">$783</b>/wk by yr <span id="rgY">10</span></span></div>
           <input id="rg" type="range" min="0" max="10" step="0.5" value="3"></label>
         <div class="two">
-        <label>Management<div class="big"><span id="mgmtOut">6</span><small>% of rent</small></div>
+        <label>Management<div class="big"><input id="mgmtTxt" class="bigin" type="text" inputmode="decimal" value="6" aria-label="Type property management percentage"><small>% of rent</small></div>
           <input id="mgmt" type="range" min="0" max="15" step="0.5" value="6"></label>
         <label>Other expenses<div class="big">$<input id="otherTxt" class="bigin" type="text" inputmode="numeric" value="5,000" aria-label="Type other expenses per year"><small>/ yr</small></div>
           <input id="other" type="range" min="0" max="30000" step="500" value="5000"></label>
@@ -613,9 +613,9 @@ tbody tr{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-let priceVal=1000000, rentVal=600, otherVal=5000;
+let priceVal=1000000, rentVal=600, otherVal=5000, mgmtVal=6;
 const fit=el=>{el.style.width=(Math.max(el.value.length,3)+0.6)+'ch';};
-const v=id=>id==='price'?priceVal:id==='rent'?rentVal:id==='other'?otherVal:(parseFloat($(id).value)||0);
+const v=id=>id==='price'?priceVal:id==='rent'?rentVal:id==='other'?otherVal:id==='mgmt'?mgmtVal:(parseFloat($(id).value)||0);
 const fmt=n=>(n<0?'-$':'$')+Math.round(Math.abs(n)).toLocaleString('en-AU');
 const cls=n=>n>=0?'pos':'neg';
 const rows=list=>list.map(([k,n])=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`).join('');
@@ -731,7 +731,8 @@ function render(){
   $('mbP').textContent=fmt(row.profit); $('mbP').className=row.profit<0?'neg':'';
   $('appOut').textContent=v('app');
   $('altOut').textContent=v('alt');
-  $('mgmtOut').textContent=v('mgmt');
+  if(document.activeElement!==$('mgmtTxt'))$('mgmtTxt').value=String(+mgmtVal.toFixed(2));
+  fit($('mgmtTxt'));
   if(document.activeElement!==$('rentTxt'))$('rentTxt').value=rentVal.toLocaleString('en-AU');
   fit($('rentTxt'));
   $('rgOut').textContent=v('rg');
@@ -823,6 +824,8 @@ $('f').addEventListener('input',e=>{
   if(e.target.id==='price')priceVal=parseFloat(e.target.value)||0;
   if(e.target.id==='rent')rentVal=parseFloat(e.target.value)||0;
   if(e.target.id==='other')otherVal=parseFloat(e.target.value)||0;
+  if(e.target.id==='mgmt')mgmtVal=parseFloat(e.target.value)||0;
+  if(e.target.id==='mgmtTxt'){mgmtVal=Math.min(100,parseFloat(e.target.value.replace(/[^\d.]/g,''))||0);$('mgmt').value=mgmtVal;}
   if(e.target.id==='otherTxt'){otherVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('other').value=otherVal;}
   if(e.target.id==='rentTxt'){rentVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('rent').value=rentVal;}
   if(e.target.id==='priceTxt'){priceVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('price').value=priceVal;}
@@ -834,6 +837,8 @@ $('rentTxt').addEventListener('blur',()=>{$('rentTxt').value=rentVal.toLocaleStr
 $('rentTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('otherTxt').addEventListener('blur',()=>{$('otherTxt').value=otherVal.toLocaleString('en-AU');fit($('otherTxt'));});
 $('otherTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
+$('mgmtTxt').addEventListener('blur',()=>{$('mgmtTxt').value=String(+mgmtVal.toFixed(2));fit($('mgmtTxt'));});
+$('mgmtTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('alt').addEventListener('input',render);
 $('lapb').addEventListener('click',()=>{
   $('lapb').classList.add('seen');
@@ -842,7 +847,7 @@ $('lapb').addEventListener('click',()=>{
   if(!n.hidden){n.hidden=true;$('lapb').setAttribute('aria-expanded','false');return;}
   if(navigator.share){                                  // phone share sheet: WhatsApp, Messages, email…
     try{
-      navigator.share({title:document.title,text:'What could a rental property make you? Try this calculator (best on a laptop for the full analysis):',url})
+      navigator.share({title:document.title,text:'What could a rental property make you? Try this calculator:',url})
         .catch(err=>{ if(!err||err.name!=='AbortError') showNote(); });   // blocked or failed: show the copy-link note
     }catch(e){ showNote(); }
   }else showNote();
