@@ -477,8 +477,8 @@ tbody tr{cursor:pointer}
     <section class="card">
       <header><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9"/><path d="M17 6l3 3"/><path d="M15 8l2 2"/></svg><h2>Rent &amp; expenses</h2></header>
       <div class="fields rf">
-        <label>Rent per week<div class="big">$<input id="rentTxt" class="bigin" style="width:5ch" type="text" inputmode="numeric" value="600" aria-label="Type rent per week"><small>/ week</small></div>
-          <input id="rent" type="range" min="100" max="2000" step="10" value="600"></label>
+        <label>Rent per week<div class="big">$<input id="rentTxt" class="bigin" style="width:5ch" type="text" inputmode="numeric" value="650" aria-label="Type rent per week"><small>/ week</small></div>
+          <input id="rent" type="range" min="100" max="2000" step="10" value="650"></label>
         <label>Rent increase per year<div class="big"><span id="rgOut">3</span><small>% / yr</small><span class="fut">→ <b id="rgFut">$783</b>/wk by yr <span id="rgY">10</span></span></div>
           <input id="rg" type="range" min="0" max="10" step="0.5" value="3"></label>
         <div class="two">
@@ -629,7 +629,7 @@ tbody tr{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-let priceVal=1000000, rentVal=600, otherVal=5000, mgmtVal=6;
+let priceVal=1000000, rentVal=650, otherVal=5000, mgmtVal=6;
 const fit=el=>{el.style.width=(Math.max(el.value.length,3)+0.6)+'ch';};
 const v=id=>id==='price'?priceVal:id==='rent'?rentVal:id==='other'?otherVal:id==='mgmt'?mgmtVal:(parseFloat($(id).value)||0);
 const fmt=n=>(n<0?'-$':'$')+Math.round(Math.abs(n)).toLocaleString('en-AU');
