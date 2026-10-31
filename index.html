@@ -115,9 +115,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .lk{font-size:.72rem;color:var(--muted);font-weight:500}
 .lk b{font-family:var(--mono);font-weight:500;color:var(--fg)}
 .lk.init{margin-top:4px;padding:6px 10px;border-radius:6px;background:var(--hl);color:var(--fg);font-size:.8rem}
-.rp{margin:14px 16px 0;padding:12px 14px;border-radius:10px;background:color-mix(in srgb,var(--accent) 12%,var(--panel));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--panel))}
-.rp .l{font-size:.75rem;color:var(--accent);font-weight:700}
-.rp .v{font-family:var(--mono);font-size:1.9rem;font-weight:500;color:var(--fg);line-height:1.15}
+.rp{margin:14px 16px 0;padding:12px 14px;border-radius:10px;background:var(--tint);border:1px solid var(--line)}
+.rp .l{font-size:.75rem;color:var(--muted);font-weight:700}
+.rp .v{font-family:var(--mono);font-size:1.9rem;font-weight:500;color:var(--ln);line-height:1.15}
 .rp .v small{font-family:var(--display);font-size:.8rem;color:var(--muted);margin-left:6px}
 .rp .m{font-size:.75rem;color:var(--muted)}
 .rp .lw{display:none}
@@ -400,7 +400,7 @@ tbody tr{cursor:pointer}
   .ti2{display:none}
   .rp .lm,.rp .v,.rp .m{display:none}
   .rp .wk{margin:0;font-size:.85rem}
-  .rp .wk b{font-size:1.5rem}
+  .rp .wk b{font-size:1.5rem;color:var(--ln)}
   .panel{padding:14px}
 }
 
@@ -495,7 +495,7 @@ tbody tr{cursor:pointer}
       <div class="rp"><div class="l"><span class="lm">Monthly repayment</span><span class="lw">Weekly repayment</span></div><div class="v"><span id="emiBig">$4,796</span><small>/ month</small></div><div class="wk"><b id="emiWk">$1,107</b> / week</div><div class="m" id="emiMeta"></div></div>
       <div class="ti2"><span id="intLbl">Interest paid by year 10 (sell year)</span><b id="intBig"></b></div>
       <div class="fields loanf">
-        <label>Interest rate<div class="big"><span id="rateOut">6</span><small>% / yr</small></div>
+        <label>Interest rate<div class="big"><input id="rateTxt" class="bigin" type="text" inputmode="decimal" value="6.00" aria-label="Type interest rate"><small>% / yr</small></div>
           <input id="rate" type="range" min="1" max="12" step="0.05" value="6"></label>
         <label>Loan term<div class="big"><span id="termOut">30</span><small>years</small></div>
           <input id="term" type="range" min="5" max="40" step="1" value="30"></label>
@@ -507,8 +507,8 @@ tbody tr{cursor:pointer}
       <div class="fields sf">
         <label>Sell after<div class="big"><span id="yrsOut">10</span><small>years</small></div>
           <input id="yrs" type="range" min="1" max="30" value="10"></label>
-        <label>Appreciation per year<div class="big"><span id="appOut">6</span><small>% / yr</small></div>
-          <input id="app" type="range" min="0" max="15" step="0.5" value="6"></label>
+        <label>Appreciation per year<div class="big"><span id="appOut">5.5</span><small>% / yr</small></div>
+          <input id="app" type="range" min="0" max="15" step="0.5" value="5.5"></label>
         <label><span>Selling costs<span class="dsk"> (agent, legal, marketing)</span></span><div class="big"><span id="sellcOut">2.5</span><small>% of sale</small></div>
           <input id="sellc" type="range" min="0" max="6" step="0.1" value="2.5"></label>
       </div>
@@ -629,9 +629,9 @@ tbody tr{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-let priceVal=1000000, rentVal=650, otherVal=5000, mgmtVal=6;
+let priceVal=1000000, rentVal=650, otherVal=5000, mgmtVal=6, rateVal=6;
 const fit=el=>{el.style.width=(Math.max(el.value.length,3)+0.6)+'ch';};
-const v=id=>id==='price'?priceVal:id==='rent'?rentVal:id==='other'?otherVal:id==='mgmt'?mgmtVal:(parseFloat($(id).value)||0);
+const v=id=>id==='price'?priceVal:id==='rent'?rentVal:id==='other'?otherVal:id==='mgmt'?mgmtVal:id==='rate'?rateVal:(parseFloat($(id).value)||0);
 const fmt=n=>(n<0?'-$':'$')+Math.round(Math.abs(n)).toLocaleString('en-AU');
 const cls=n=>n>=0?'pos':'neg';
 const rows=list=>list.map(([k,n])=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`).join('');
@@ -755,7 +755,8 @@ function render(){
   $('lvrOut').textContent=v('lvr');
   $('termOut').textContent=v('term');
   $('sellcOut').textContent=v('sellc');
-  $('rateOut').textContent=v('rate').toFixed(2);
+  if(document.activeElement!==$('rateTxt'))$('rateTxt').value=rateVal.toFixed(2);
+  fit($('rateTxt'));
 
   $('depAmt').textContent=fmt(d.deposit);
   $('depOut').textContent=v('dep'); $('depAmt').textContent=fmt(v('price')*v('dep')/100);
@@ -841,6 +842,8 @@ $('f').addEventListener('input',e=>{
   if(e.target.id==='rent')rentVal=parseFloat(e.target.value)||0;
   if(e.target.id==='other')otherVal=parseFloat(e.target.value)||0;
   if(e.target.id==='mgmt')mgmtVal=parseFloat(e.target.value)||0;
+  if(e.target.id==='rate')rateVal=parseFloat(e.target.value)||0;
+  if(e.target.id==='rateTxt'){rateVal=Math.min(30,parseFloat(e.target.value.replace(/[^\d.]/g,''))||0);$('rate').value=rateVal;}
   if(e.target.id==='mgmtTxt'){mgmtVal=Math.min(100,parseFloat(e.target.value.replace(/[^\d.]/g,''))||0);$('mgmt').value=mgmtVal;}
   if(e.target.id==='otherTxt'){otherVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('other').value=otherVal;}
   if(e.target.id==='rentTxt'){rentVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('rent').value=rentVal;}
@@ -855,6 +858,8 @@ $('otherTxt').addEventListener('blur',()=>{$('otherTxt').value=otherVal.toLocale
 $('otherTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('mgmtTxt').addEventListener('blur',()=>{$('mgmtTxt').value=String(+mgmtVal.toFixed(2));fit($('mgmtTxt'));});
 $('mgmtTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
+$('rateTxt').addEventListener('blur',()=>{$('rateTxt').value=rateVal.toFixed(2);fit($('rateTxt'));});
+$('rateTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('alt').addEventListener('input',render);
 $('lapb').addEventListener('click',()=>{
   $('lapb').classList.add('seen');
