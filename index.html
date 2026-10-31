@@ -440,9 +440,9 @@ tbody tr{cursor:pointer}
 
 <div class="wrap">
   <header>
-    <div class="htop"><h1>Calculate your property profit after any number of years</h1>
-      <button class="lapb" id="lapb" type="button" aria-label="Share this calculator to open on a laptop" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg><span class="dot"></span></button></div>
-    <div class="lapn" id="lapn" hidden><b>More detail on a laptop</b>Year-by-year tables, charts and the full breakdown are easier to read on a bigger screen.<br><button type="button" id="lapc">Copy link</button></div>
+    <div class="htop"><h1>What could a rental property make you?</h1>
+      <button class="lapb" id="lapb" type="button" aria-label="Share this calculator" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M8 11H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2"/></svg><span class="dot"></span></button></div>
+    <div class="lapn" id="lapn" hidden><b>Share this calculator</b>Send the link to yourself or a friend. The tables and charts are easier to read on a laptop.<br><button type="button" id="lapc">Copy link</button></div>
     <p class="flag">For illustration only. Not financial advice. <a href="#disclaimer">Read the disclaimer</a>.</p>
   </header>
 
@@ -838,9 +838,14 @@ $('alt').addEventListener('input',render);
 $('lapb').addEventListener('click',()=>{
   $('lapb').classList.add('seen');
   const url=location.href.split('#')[0], n=$('lapn');
+  const showNote=()=>{n.hidden=false;$('lapb').setAttribute('aria-expanded','true');};
+  if(!n.hidden){n.hidden=true;$('lapb').setAttribute('aria-expanded','false');return;}
   if(navigator.share){                                  // phone share sheet: WhatsApp, Messages, email…
-    navigator.share({title:document.title,text:'Rental property profit calculator. Open it on a laptop for the full analysis:',url}).catch(()=>{});
-  }else{ n.hidden=!n.hidden; $('lapb').setAttribute('aria-expanded',String(!n.hidden)); }
+    try{
+      navigator.share({title:document.title,text:'What could a rental property make you? Try this calculator (best on a laptop for the full analysis):',url})
+        .catch(err=>{ if(!err||err.name!=='AbortError') showNote(); });   // blocked or failed: show the copy-link note
+    }catch(e){ showNote(); }
+  }else showNote();
 });
 $('lapc').addEventListener('click',()=>{const u=location.href.split('#')[0],b=$('lapc'),done=t=>{b.textContent=t;setTimeout(()=>{b.textContent='Copy link';},2000);};try{navigator.clipboard.writeText(u).then(()=>done('Link copied ✓'),()=>done('Copy the address from your browser'));}catch(e){done('Copy the address from your browser');}});
 ['altP','altH'].forEach(id=>$(id).addEventListener('change',render));
