@@ -86,6 +86,23 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:.95rem;width:1
 input:focus{outline:2px solid var(--accent);outline-offset:1px}
 input[type=range]{width:100%;accent-color:var(--accent)}
 .calc{font-size:.85rem;color:var(--muted)}
+.cmp h3.cmph{font-size:1.05rem;font-weight:800;text-transform:none;letter-spacing:0;color:var(--fg);margin:0}
+.cmph .cp,.cmph .ci{padding:1px 8px;border-radius:6px}
+.cmph .cp{color:var(--s1);background:color-mix(in srgb,var(--s1) 12%,var(--panel))}
+.cmph .ci{color:var(--s2);background:color-mix(in srgb,var(--s2) 12%,var(--panel))}
+.htop{display:flex;gap:12px;align-items:flex-start}
+.htop h1{flex:1;min-width:0}
+.lapb{display:none;position:relative;flex:none;width:42px;height:42px;border-radius:12px;border:1px solid color-mix(in srgb,var(--s1) 40%,var(--panel));background:color-mix(in srgb,var(--s1) 12%,var(--panel));color:var(--s1);align-items:center;justify-content:center;cursor:pointer;padding:0}
+.lapb svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lapb .dot{position:absolute;top:-4px;right:-4px;width:11px;height:11px;border-radius:50%;background:var(--s2);border:2px solid var(--bg)}
+.lapb.seen .dot{display:none}
+.lapb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lapn{margin-top:8px;font-size:.8rem;line-height:1.45;color:var(--fg);background:color-mix(in srgb,var(--s1) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--s1) 35%,var(--panel));border-radius:10px;padding:9px 12px}
+.lapn b{display:block;font-size:.85rem;margin-bottom:2px}
+.lapn button{margin-top:7px;font:inherit;font-size:.78rem;font-weight:700;padding:4px 12px;border-radius:999px;border:1px solid var(--s1);color:var(--s1);background:transparent;cursor:pointer}
+@media (max-width:900px){.lapb{display:flex}}
+@media (min-width:901px){.lapn{display:none!important}}
+.yn{font-family:var(--mono);font-weight:500;color:var(--accent);padding:0 6px;margin:0 1px;border-radius:6px;background:var(--hl)}
 .lk{font-size:.72rem;color:var(--muted);font-weight:500}
 .lk b{font-family:var(--mono);font-weight:500;color:var(--fg)}
 .lk.init{margin-top:4px;padding:6px 10px;border-radius:6px;background:var(--hl);color:var(--fg);font-size:.8rem}
@@ -94,6 +111,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .rp .v{font-family:var(--mono);font-size:1.9rem;font-weight:500;color:var(--fg);line-height:1.15}
 .rp .v small{font-family:var(--display);font-size:.8rem;color:var(--muted);margin-left:6px}
 .rp .m{font-size:.75rem;color:var(--muted)}
+.rp .lw{display:none}
+@media (max-width:700px){.rp .lw{display:inline}}
 .rp .wk{font-size:.85rem;color:var(--muted);margin:1px 0 3px}
 .rp .wk b{font-family:var(--mono);font-weight:500;font-size:1.05rem;color:var(--fg)}
 .ti2{margin:0 16px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.75rem;color:var(--muted);padding:10px 0;border-bottom:1px dashed var(--line)}
@@ -295,13 +314,135 @@ td{font-family:var(--mono);font-variant-numeric:tabular-nums}
 th:first-child,td:first-child{text-align:left}
 tr.on td{background:var(--hl);font-weight:500}
 tbody tr{cursor:pointer}
+
+/* cash flow row (mockup) */
+.cash{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+@media (max-width:900px){.cash{grid-template-columns:minmax(0,1fr)}}
+.cash .bd{padding:14px 16px 16px;display:grid;gap:12px}
+.ck{padding:10px 12px;border-radius:10px;display:grid;gap:2px}
+.ck .l{font-size:.75rem;font-weight:700}
+.ck .v{font-family:var(--mono);font-size:1.6rem;font-weight:500;line-height:1.15}
+.ck .s{font-size:.75rem}
+.ck.or{background:color-mix(in srgb,var(--s2) 12%,var(--panel));color:var(--fg)} .ck.or .l{color:var(--s2)}
+.ck.bl{background:color-mix(in srgb,var(--s1) 12%,var(--panel));color:var(--fg)} .ck.bl .l{color:var(--s1)}
+.ck .s{color:var(--muted)}
+.ck .wk{font-size:.85rem;color:var(--muted);margin:1px 0 3px}
+.ck .wk b{font-family:var(--mono);font-weight:500;font-size:1.05rem;color:var(--fg)}
+.ob{display:flex;align-items:flex-end;gap:4px;height:110px;padding-top:18px}
+.ob button{flex:1;height:100%;border:0;padding:0;background:transparent;display:flex;align-items:flex-end;cursor:pointer;border-radius:4px;position:relative;min-width:0}
+.ob button:hover{background:var(--tint)}
+.ob button i{display:block;width:100%;border-radius:3px 3px 0 0;background:color-mix(in srgb,var(--s2) 55%,var(--panel))}
+.ob button.on i{background:var(--s2)}
+.ob button b{position:absolute;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--fg);white-space:nowrap;display:none}
+.ob button.on b{display:block}
+.oy{display:flex;gap:4px}.oy span{flex:1;text-align:center;font-size:.65rem;color:var(--muted);min-width:0}.oy span.on{color:var(--fg);font-weight:700}
+.ol{display:grid;gap:5px;font-size:.85rem}
+.ol div{display:flex;justify-content:space-between;gap:8px}
+.ol span{color:var(--muted)} .ol b{font-family:var(--mono);font-weight:500}
+.ol .tot{border-top:1px solid var(--line);padding-top:6px} .ol .tot span{color:var(--fg);font-weight:700}
+.ohint{font-size:.72rem;color:var(--muted)}
+.obt{font-size:.78rem;font-weight:700;color:var(--fg)}
+.oyl{text-align:center;font-size:.68rem;color:var(--muted);margin-top:1px}
+.cash details>summary{list-style:none;cursor:pointer;display:block}
+.cash details>summary::-webkit-details-marker{display:none}
+.cash details>summary .tg{margin-left:4px;font-size:.78rem;color:var(--accent);font-weight:700}
+.cash details>summary .tg::after{content:"Show \25BE"} .cash details[open]>summary .tg::after{content:"Hide \25B4"}
+@media (min-width:901px){#payd>summary{cursor:default;pointer-events:none}#payd>summary .tg{display:none}}
+
+/* mobile compact (mockup) */
+.msum,.dmore>summary{list-style:none;cursor:pointer}
+.msum::-webkit-details-marker,.dmore>summary::-webkit-details-marker{display:none}
+.msum{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-weight:800;font-size:.95rem}
+.mdet[open]>.msum{margin-bottom:12px}
+.msum .tg{font-size:.78rem;color:var(--accent);font-weight:700}
+.msum .tg::after{content:"Show \25BE"} .mdet[open]>.msum .tg::after{content:"Hide \25B4"}
+.dmore>summary{color:var(--accent);font-weight:700;font-size:.8rem;margin:0 0 8px}
+.dmore[open]>summary{display:none}
+@media (min-width:901px){.msum{display:none}.dmore>summary{display:none}}
+@media (max-width:700px){
+  h1{font-size:1.3rem}
+  .wrap{gap:14px}
+  .card header{padding:10px 14px}
+  .fields{gap:10px;padding:12px 14px}
+  .fields label{grid-template-columns:minmax(0,1fr) auto;align-items:baseline;column-gap:10px;row-gap:2px}
+  .fields label>input[type=range]{grid-column:1/-1}
+  .fields label>.big{font-size:1.35rem;text-align:right;justify-self:end}
+  .fields label>.big small{font-size:.72rem;margin-left:3px}
+  .fields label>.big .fut{display:block;margin:2px 0 0;text-align:right;font-size:.68rem}
+  .two{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 14px}
+  .fields .two label{grid-template-columns:minmax(0,1fr)}
+  .card.sell .fields.sf{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:14px}
+  .fields.sf label:first-child{grid-column:1/-1}
+  .fields.sf label:not(:first-child){grid-template-columns:minmax(0,1fr)}
+  .fields.sf label:not(:first-child)>.big{font-size:1.2rem;text-align:left;justify-self:start;white-space:nowrap}
+  .dsk{display:none}
+  .fields.rf{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:14px}
+  .fields.rf>.two{grid-column:1/-1}
+  .fields.rf>label{grid-template-columns:minmax(0,1fr)}
+  .fields.rf>label>.big{font-size:1.2rem;text-align:left;justify-self:start;white-space:nowrap}
+  .fields.rf>label>.big .fut{display:none}
+  .loanf{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:14px}
+  .fields.loanf label{grid-template-columns:minmax(0,1fr)}
+  .fields.loanf label>.big{font-size:1.2rem;text-align:left;justify-self:start;white-space:nowrap}
+  .fields .two label>.big{font-size:1.2rem;text-align:left;justify-self:start;white-space:nowrap}
+  .dlv b{font-size:1.25rem}
+  .rp{margin:12px 14px 0;padding:10px 12px}
+  .rp .v{font-size:1.5rem}
+  .ti2{display:none}
+  .rp .lm,.rp .v,.rp .m{display:none}
+  .rp .wk{margin:0;font-size:.85rem}
+  .rp .wk b{font-size:1.5rem}
+  .panel{padding:14px}
+}
+
+@media (min-width:901px){
+  .cash>.card:nth-child(1){position:relative;min-height:0}
+  #oopd{position:absolute;inset:0;overflow:auto}
+  #oopd[open]>summary>.bd{display:none}
+  #oopd .ob{height:96px}
+  #oopd .ohint,#oopd .oyl{display:none}
+  #oopd>.bd{padding-top:12px}
+  .wrap{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .wrap>*{grid-column:1/-1}
+  #f,.cash{display:contents}
+  #f>.card,.cash>.card{grid-column:auto}
+  #f>.card.sell{flex-direction:column}
+  #f>.card.sell header{border-right:0;border-bottom:1px solid var(--line);min-width:0}
+  #f>.card.sell .fields{grid-template-columns:minmax(0,1fr)}
+  .wrap>*{order:20}
+  .wrap>header{order:0}
+  #f>.card:nth-child(1){order:1}
+  #f>.card:nth-child(2){order:2}
+  #f>.card:nth-child(3){order:3}
+  .cash>.card:nth-child(1){order:4}
+  .cash>.card:nth-child(2){order:5}
+  #f>.card.sell{order:6}
+}
+@media (max-width:900px){
+  #f,.cash{display:contents}
+  .wrap>*{order:20}
+  .wrap>header{order:0}
+  #f>.card:nth-child(1){order:1}
+  #f>.card:nth-child(2){order:2}
+  #f>.card:nth-child(3){order:3}
+  .cash>.card:nth-child(1){order:4}
+  .cash>.card:nth-child(2){order:5}
+  #f>.card.sell{order:6}
+}
+@media (max-width:700px){
+  #oopd .ck .wk,#oopd .ck .s{display:none}
+  #oopd .ck .v{font-size:1.5rem}
+  #oopd>summary>.bd{padding:12px 14px}
+}
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <h1>Calculate your property profit after any number of years</h1>
+    <div class="htop"><h1>Calculate your property profit after any number of years</h1>
+      <button class="lapb" id="lapb" type="button" aria-label="Share this calculator to open on a laptop" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg><span class="dot"></span></button></div>
+    <div class="lapn" id="lapn" hidden><b>More detail on a laptop</b>Year-by-year tables, charts and the full breakdown are easier to read on a bigger screen.<br><button type="button" id="lapc">Copy link</button></div>
     <p class="flag">For illustration only. Not financial advice. <a href="#disclaimer">Read the disclaimer</a>.</p>
   </header>
 
@@ -326,7 +467,7 @@ tbody tr{cursor:pointer}
 
     <section class="card">
       <header><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9"/><path d="M17 6l3 3"/><path d="M15 8l2 2"/></svg><h2>Rent &amp; expenses</h2></header>
-      <div class="fields">
+      <div class="fields rf">
         <label>Rent per week<div class="big">$<input id="rentTxt" class="bigin" style="width:5ch" type="text" inputmode="numeric" value="600" aria-label="Type rent per week"><small>/ week</small></div>
           <input id="rent" type="range" min="100" max="2000" step="10" value="600"></label>
         <label>Rent increase per year<div class="big"><span id="rgOut">3</span><small>% / yr</small><span class="fut">→ <b id="rgFut">$783</b>/wk by yr <span id="rgY">10</span></span></div>
@@ -334,7 +475,7 @@ tbody tr{cursor:pointer}
         <div class="two">
         <label>Management<div class="big"><span id="mgmtOut">6</span><small>% of rent</small></div>
           <input id="mgmt" type="range" min="0" max="15" step="0.5" value="6"></label>
-        <label>Other expenses<div class="big">$<span id="otherOut">5,000</span><small>/ yr</small></div>
+        <label>Other expenses<div class="big">$<input id="otherTxt" class="bigin" type="text" inputmode="numeric" value="5,000" aria-label="Type other expenses per year"><small>/ yr</small></div>
           <input id="other" type="range" min="0" max="30000" step="500" value="5000"></label>
         </div>
       </div>
@@ -342,9 +483,9 @@ tbody tr{cursor:pointer}
 
     <section class="card">
       <header><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg><h2>Loan</h2></header>
-      <div class="rp"><div class="l">Monthly repayment</div><div class="v"><span id="emiBig">$4,796</span><small>/ month</small></div><div class="wk"><b id="emiWk">$1,107</b> / week</div><div class="m" id="emiMeta"></div></div>
+      <div class="rp"><div class="l"><span class="lm">Monthly repayment</span><span class="lw">Weekly repayment</span></div><div class="v"><span id="emiBig">$4,796</span><small>/ month</small></div><div class="wk"><b id="emiWk">$1,107</b> / week</div><div class="m" id="emiMeta"></div></div>
       <div class="ti2"><span id="intLbl">Interest paid by year 10 (sell year)</span><b id="intBig"></b></div>
-      <div class="fields">
+      <div class="fields loanf">
         <label>Interest rate<div class="big"><span id="rateOut">6</span><small>% / yr</small></div>
           <input id="rate" type="range" min="1" max="12" step="0.05" value="6"></label>
         <label>Loan term<div class="big"><span id="termOut">30</span><small>years</small></div>
@@ -353,24 +494,58 @@ tbody tr{cursor:pointer}
     </section>
 
     <section class="card sell">
-      <header><svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M5 15l4-4 3 3 7-7"/><path d="M15 7h4v4"/></svg><h2>Sell &amp; compare</h2></header>
-      <div class="fields">
+      <header><svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M5 15l4-4 3 3 7-7"/><path d="M15 7h4v4"/></svg><h2>When you sell</h2></header>
+      <div class="fields sf">
         <label>Sell after<div class="big"><span id="yrsOut">10</span><small>years</small></div>
           <input id="yrs" type="range" min="1" max="30" value="10"></label>
         <label>Appreciation per year<div class="big"><span id="appOut">6</span><small>% / yr</small></div>
           <input id="app" type="range" min="0" max="15" step="0.5" value="6"></label>
-        <label>Selling costs (agent, legal, marketing)<div class="big"><span id="sellcOut">2.5</span><small>% of sale</small></div>
+        <label><span>Selling costs<span class="dsk"> (agent, legal, marketing)</span></span><div class="big"><span id="sellcOut">2.5</span><small>% of sale</small></div>
           <input id="sellc" type="range" min="0" max="6" step="0.1" value="2.5"></label>
       </div>
     </section>
   </form>
+
+  <div class="cash">
+    <section class="card">
+      <details id="oopd">
+      <summary><header><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M16 13h2"/><path d="M3 10h13a2 2 0 0 0 2-2V5"/></svg><h2 id="oopT">Out of pocket each month</h2><span class="tg"></span></header>
+      <div class="bd"><div class="ck or"><span class="l" id="okl"></span><span class="v" id="okv"></span><span class="wk"><b id="okw"></b> / week</span><span class="s" id="oks"></span></div></div></summary>
+      <div class="bd" style="padding-top:0">
+        <div><div class="obt" id="obT">Monthly top-up in each year</div><div class="ob" id="ob" role="group" aria-label="Out of pocket by year"></div><div class="oy" id="oy"></div><div class="oyl">Year</div><div class="ohint">Tap or hover a bar to see that year.</div></div>
+        <div class="ol">
+          <div><span>Loan repayment</span><b id="ol1"></b></div>
+          <div><span>+ Management and other expenses</span><b id="ol2"></b></div>
+          <div><span>&minus; Rent (<span id="orw"></span>/wk)</span><b id="ol3"></b></div>
+          <div class="tot"><span id="ol4l">= Out of pocket</span><b id="ol4"></b></div>
+        </div>
+      </div>
+      </details>
+    </section>
+    <section class="card">
+      <details id="payd" open>
+        <summary><header><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l7-7"/></svg><h2>Pay off the loan sooner</h2><span class="tg"></span></header></summary>
+        <div class="bd">
+          <div class="fields" style="padding:0"><label>Pay off the loan in<div class="big"><span id="ptO">15</span><small id="ptS">years (instead of 30)</small></div>
+            <input id="pt" type="range" min="5" max="30" step="1" value="15"></label></div>
+          <div class="ck bl"><span class="l">Extra repayment needed</span><span class="v" id="pex"></span><span class="s" id="pexw"></span></div>
+          <div class="ol">
+            <div><span>Current repayment</span><b id="pc0"></b></div>
+            <div><span>New repayment</span><b id="pc1"></b></div>
+            <div><span>Total interest saved</span><b class="pos" id="psv"></b></div>
+            <div><span>Loan-free by</span><b id="pyr"></b></div>
+          </div>
+        </div>
+      </details>
+    </section>
+  </div>
 
   <section class="panel verdict"><div class="vgrid"><div>
     <h2 id="vh">If you sell after 10 years</h2>
     <div class="stats" id="stats"></div>
     <details class="hcd" id="hcd"><summary><span id="hcs">Holding cost breakdown</span><em class="tg"></em></summary><div class="hc" id="hc"></div></details>
   </div><aside class="cmp">
-    <h3>Property vs investing elsewhere</h3>
+    <h3 class="cmph"><span class="cp">Property</span> vs <span class="ci">investing elsewhere</span></h3>
     <div class="altbox">
       <label class="alt">Or invest the same money elsewhere at<div class="big"><span id="altOut">8</span><small>% / yr</small></div>
         <input id="alt" type="range" min="0" max="15" step="0.5" value="8"></label>
@@ -384,6 +559,7 @@ tbody tr{cursor:pointer}
   </aside></div></section>
 
 
+  <details class="mdet" id="tblD"><summary class="msum">Year-by-year tables<span class="tg"></span></summary>
   <div class="tables">
     <section class="card">
       <header><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg><h2>Loan repayments</h2></header>
@@ -410,17 +586,22 @@ tbody tr{cursor:pointer}
       <button type="button" class="moreBtn">Show all years</button>
     </section>
   </div>
+  </details>
 
+  <details class="mdet" id="chD"><summary class="msum">Charts<span class="tg"></span></summary>
   <section class="panel charts">
     <div class="chart" id="c1"></div>
     <div class="chart" id="c2"></div>
   </section>
+  </details>
 
   <footer class="disc" id="disclaimer">
     <h2>Disclaimer</h2>
     <p>This calculator provides general information only and is intended for illustration and educational purposes. It is not financial, investment, tax, legal or credit advice, and it does not take into account your objectives, financial situation or needs. We are not licensed financial advisers, mortgage brokers or tax agents.</p>
+    <details class="dmore" id="discD"><summary>Read full disclaimer</summary>
     <p>All results are estimates based solely on the figures you enter and on simplified assumptions. Property growth, the interest rate and expenses stay the same every year, and rent rises at the fixed rate you choose. Stamp duty and other costs are a simple percentage of the price, and Lenders Mortgage Insurance (LMI) is a rough estimate based on typical published rates; actual premiums vary by lender and insurer. The calculator does not include income tax, negative gearing, depreciation, capital gains tax, land tax, vacancy periods, inflation or changes in interest rates. Actual outcomes will differ, and past or assumed returns are not a guarantee of future results.</p>
     <p>Do not rely on this calculator to make any financial decision. Before buying, selling or borrowing, consider seeking advice from a licensed financial adviser, mortgage broker or registered tax agent. You use this calculator at your own risk, and we accept no liability for any loss arising from its use.</p>
+      </details>
   </footer>
 </div>
 
@@ -432,9 +613,9 @@ tbody tr{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-let priceVal=1000000, rentVal=600;
+let priceVal=1000000, rentVal=600, otherVal=5000;
 const fit=el=>{el.style.width=(Math.max(el.value.length,3)+0.6)+'ch';};
-const v=id=>id==='price'?priceVal:id==='rent'?rentVal:(parseFloat($(id).value)||0);
+const v=id=>id==='price'?priceVal:id==='rent'?rentVal:id==='other'?otherVal:(parseFloat($(id).value)||0);
 const fmt=n=>(n<0?'-$':'$')+Math.round(Math.abs(n)).toLocaleString('en-AU');
 const cls=n=>n>=0?'pos':'neg';
 const rows=list=>list.map(([k,n])=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`).join('');
@@ -510,6 +691,33 @@ function ring(a,b,X){
   return `<svg viewBox="0 0 120 120" role="img" aria-label="Property profit compared with investing elsewhere">${arc(50,a,'var(--s1)')}${arc(35,b,'var(--s2)')}<text x="60" y="58" text-anchor="middle" class="rn">${X}</text><text x="60" y="73" text-anchor="middle" class="ru">year${X>1?'s':''}</text></svg>`;
 }
 
+
+let oSel=0;
+function cashRender(d,X){
+  const W=matchMedia('(max-width:700px)').matches, F=W?12/52:1, U=W?'week':'month'; $('oopT').textContent='Out of pocket each '+U; $('obT').textContent=(W?'Weekly':'Monthly')+' top-up in each year';
+  const rows=d.rows.slice(0,X), oop=rows.map(r=>(d.emi*12+r.rentY*v('mgmt')/100+v('other')-r.rentY)/12*F);
+  if(oSel>=X)oSel=0;
+  const mx=Math.max(...oop.map(Math.abs),1)*1.08, avg=oop.reduce((a,b)=>a+b,0)/X;
+  $('ob').innerHTML=oop.map((o,i)=>`<button type="button" data-i="${i}" aria-label="Year ${i+1}: ${fmt(o)} per ${U}"><b style="bottom:calc(${Math.max(0,o)/mx*100}% + 3px)">${fmt(o)}${W?'/wk':'/mo'}</b><i style="height:${Math.max(0,o)/mx*100}%"></i></button>`).join('');
+  $('oy').innerHTML=oop.map((o,i)=>`<span>${(X<=15||i%2===0||i===X-1)?i+1:''}</span>`).join('');
+  const show=i=>{const r=rows[i],o=oop[i];
+    document.querySelectorAll('#ob button').forEach((b,k)=>b.classList.toggle('on',k===i));
+    document.querySelectorAll('#oy span').forEach((s,k)=>s.classList.toggle('on',k===i));
+    $('okl').textContent=o>=0?`You top up in year ${i+1}`:`Rent covers everything in year ${i+1}`;
+    $('okv').textContent=(o>=0?fmt(o):'+'+fmt(-o))+' / '+U;
+    $('okw').textContent=(o>=0?fmt(o*12/52):'+'+fmt(-o*12/52));
+    $('oks').textContent=i===0?`${oop[X-1]<oop[0]?'Falls':'Changes'} to ${fmt(oop[X-1])}/${U} by year ${X} \u00b7 average ${fmt(avg)}/${U}`:`${fmt(oop[0]-o)}/${U} less than year 1 \u00b7 average ${fmt(avg)}/${U}`;
+    $('ol1').textContent=fmt(d.emi*F);$('ol2').textContent=fmt((r.rentY*v('mgmt')/100+v('other'))/12*F);$('ol3').textContent='\u2212'+fmt(r.rentY/12*F);$('orw').textContent=fmt(r.rentY/52);$('ol4').textContent=fmt(o);$('ol4l').textContent=`= Out of pocket (year ${i+1})`;};
+  document.querySelectorAll('#ob button').forEach(b=>{b.addEventListener('click',()=>{oSel=+b.dataset.i;show(oSel);});b.addEventListener('mouseenter',()=>show(+b.dataset.i));b.addEventListener('focus',()=>show(+b.dataset.i));});
+  $('ob').onmouseleave=()=>show(oSel); show(oSel);
+  const n=v('term'), m=v('rate')/100/12, pmt=k=>m?d.L*m/(1-Math.pow(1+m,-k)):d.L/k;
+  $('pt').max=n; if(+$('pt').value>n)$('pt').value=n; const t=+$('pt').value, p=pmt(t*12);
+  $('ptO').textContent=t; $('ptS').textContent=`years (instead of ${n})`;
+  $('pex').textContent=t>=n?'$0 / month':fmt(p-d.emi)+' / month';
+  $('pexw').textContent=t>=n?'Your current loan term':`about ${fmt((p-d.emi)*12/52)} a week`;
+  $('pc0').textContent=fmt(d.emi)+'/mo';$('pc1').textContent=fmt(p)+'/mo';
+  $('psv').textContent=fmt(d.emi*n*12-p*t*12);$('pyr').textContent=`${new Date().getFullYear()+t} (${t} yrs)`;
+}
 function render(){
   const cb=$('lmiOn'), lvrOver=v('lvr')>80;        // LMI only applies above 80%
   if(!lvrOver){cb.checked=false;cb.disabled=true;}
@@ -518,6 +726,7 @@ function render(){
   $('yrs').max=d.rows.length;
   const X=Math.min(Math.max(1,Math.round(v('yrs'))),d.rows.length), row=d.rows[X-1];
   $('yrsOut').textContent=X;
+  cashRender(d,X);
   $('yrs2').max=d.rows.length; $('yrs2').value=X; $('mbY').textContent=X;
   $('mbP').textContent=fmt(row.profit); $('mbP').className=row.profit<0?'neg':'';
   $('appOut').textContent=v('app');
@@ -539,14 +748,15 @@ function render(){
   const p=v('price');
   if(document.activeElement!==$('priceTxt'))$('priceTxt').value=p.toLocaleString('en-AU');
   fit($('priceTxt'));
-  $('otherOut').textContent=v('other').toLocaleString('en-AU');
+  if(document.activeElement!==$('otherTxt'))$('otherTxt').value=otherVal.toLocaleString('en-AU');
+  fit($('otherTxt'));
   $('priceAmt').textContent=p>=1e6?'$'+parseFloat((p/1e6).toFixed(2))+'M':'$'+parseFloat((p/1e3).toFixed(1))+'K';
   $('rgFut').textContent=fmt(row.rentY/52); $('rgY').textContent=X;
   $('emiBig').textContent=fmt(d.emi); $('emiWk').textContent=fmt(d.emi*12/52);
   $('emiMeta').textContent=`Loan ${fmt(d.L)} · ${d.lmi?'incl. LMI '+fmt(d.lmi):'No LMI'} · ${v('term')} yrs`;
   $('intLbl').textContent=`Interest paid by year ${X} (sell year)`; $('intBig').textContent=fmt(row.cumInt);
 
-  $('vh').textContent=`Return after ${X} year${X>1?'s':''}: property vs investing elsewhere`;
+  $('vh').innerHTML=`How your money grows over <span class="yn">${X}</span> year${X>1?'s':''}`;
   const diff=row.profit-row.altGain;
   const cashSale=row.val-row.sellCost-row.bal, putIn=d.deposit+row.cumPrin+row.hold;
   const li=(k,n)=>`<div><span>${k}</span><b>${fmt(n)}</b></div>`;
@@ -612,6 +822,8 @@ $('f').addEventListener('input',e=>{
   if(id==='lvr')$('dep').value=100-+$('lvr').value;
   if(e.target.id==='price')priceVal=parseFloat(e.target.value)||0;
   if(e.target.id==='rent')rentVal=parseFloat(e.target.value)||0;
+  if(e.target.id==='other')otherVal=parseFloat(e.target.value)||0;
+  if(e.target.id==='otherTxt'){otherVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('other').value=otherVal;}
   if(e.target.id==='rentTxt'){rentVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('rent').value=rentVal;}
   if(e.target.id==='priceTxt'){priceVal=parseFloat(e.target.value.replace(/[^\d.]/g,''))||0;$('price').value=priceVal;}
   render();
@@ -620,11 +832,27 @@ $('priceTxt').addEventListener('blur',()=>{$('priceTxt').value=priceVal.toLocale
 $('priceTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('rentTxt').addEventListener('blur',()=>{$('rentTxt').value=rentVal.toLocaleString('en-AU');fit($('rentTxt'));});
 $('rentTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
+$('otherTxt').addEventListener('blur',()=>{$('otherTxt').value=otherVal.toLocaleString('en-AU');fit($('otherTxt'));});
+$('otherTxt').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
 $('alt').addEventListener('input',render);
+$('lapb').addEventListener('click',()=>{
+  $('lapb').classList.add('seen');
+  const url=location.href.split('#')[0], n=$('lapn');
+  if(navigator.share){                                  // phone share sheet: WhatsApp, Messages, email…
+    navigator.share({title:document.title,text:'Rental property profit calculator. Open it on a laptop for the full analysis:',url}).catch(()=>{});
+  }else{ n.hidden=!n.hidden; $('lapb').setAttribute('aria-expanded',String(!n.hidden)); }
+});
+$('lapc').addEventListener('click',()=>{const u=location.href.split('#')[0],b=$('lapc'),done=t=>{b.textContent=t;setTimeout(()=>{b.textContent='Copy link';},2000);};try{navigator.clipboard.writeText(u).then(()=>done('Link copied ✓'),()=>done('Copy the address from your browser'));}catch(e){done('Copy the address from your browser');}});
 ['altP','altH'].forEach(id=>$(id).addEventListener('change',render));
 document.querySelectorAll('.moreBtn').forEach(b=>b.addEventListener('click',()=>{document.querySelector('.tables').classList.toggle('all');render();}));
 $('lmiOn').addEventListener('change',render);
 $('hcd').open=!matchMedia('(max-width:820px)').matches;
+$('pt').addEventListener('input',render);
+$('oopd').addEventListener('toggle',()=>{if(!$('oopd').open&&oSel!==0){oSel=0;render();}});
+if(matchMedia('(max-width:900px)').matches)$('payd').open=false;
+matchMedia('(max-width:700px)').addEventListener('change',render);
+if(matchMedia('(min-width:901px)').matches)['tblD','chD','discD'].forEach(id=>$(id).open=true);
+document.querySelector('.flag a').addEventListener('click',()=>{$('discD').open=true;});
 $('yrs2').addEventListener('input',e=>{$('yrs').value=e.target.value;render();});
 ['tb','tb2','tb3'].forEach(id=>$(id).addEventListener('click',e=>{const tr=e.target.closest('tr');if(tr){$('yrs').value=tr.dataset.y;render();}}));
 render();
