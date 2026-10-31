@@ -90,6 +90,15 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .cmph .cp,.cmph .ci{padding:1px 8px;border-radius:6px}
 .cmph .cp{color:var(--s1);background:color-mix(in srgb,var(--s1) 12%,var(--panel))}
 .cmph .ci{color:var(--s2);background:color-mix(in srgb,var(--s2) 12%,var(--panel))}
+.idea{display:flex;align-items:center;flex-wrap:wrap;gap:12px 14px;padding:14px 18px;border-radius:14px;background:color-mix(in srgb,var(--s4) 16%,var(--panel));border:1px solid color-mix(in srgb,var(--s4) 45%,var(--panel))}
+.ideaic{width:40px;height:40px;border-radius:11px;background:var(--s4);color:#412402;display:flex;align-items:center;justify-content:center;flex:none}
+.ideaic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.idea b{flex:1;min-width:150px;font-size:1.1rem;font-weight:800}
+.ideab{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:999px;background:var(--fg);color:var(--bg);font-weight:700;font-size:.9rem;text-decoration:none;white-space:nowrap}
+.ideab svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.ideab:hover{opacity:.9}
+.ideab:focus-visible{outline:2px solid var(--s4);outline-offset:3px}
+@media (max-width:600px){.ideab{width:100%}}
 .htop{display:flex;gap:12px;align-items:flex-start}
 .htop h1{flex:1;min-width:0}
 .lapb{display:none;position:relative;flex:none;width:42px;height:42px;border-radius:12px;border:1px solid color-mix(in srgb,var(--s1) 40%,var(--panel));background:color-mix(in srgb,var(--s1) 12%,var(--panel));color:var(--s1);align-items:center;justify-content:center;cursor:pointer;padding:0}
@@ -220,7 +229,7 @@ details.note summary{cursor:pointer;color:var(--accent);font-weight:700}
 .flag a,.disc a{color:var(--accent)}
 .disc{border-top:1px solid var(--line);padding-top:16px;font-size:.78rem;color:var(--muted);line-height:1.55}
 .disc h2{margin:0 0 6px;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--fg)}
-.disc p{margin:0 0 8px;max-width:95ch}
+.disc p{margin:0 0 8px}
 .hcd{margin-top:16px;background:var(--tint);border-radius:8px}
 .hcd summary{cursor:pointer;list-style:none;display:flex;justify-content:flex-start;align-items:center;gap:10px;padding:12px 14px;font-size:.9rem;font-weight:700}
 .hcd summary::-webkit-details-marker{display:none}
@@ -595,12 +604,19 @@ tbody tr{cursor:pointer}
   </section>
   </details>
 
+  <section class="idea" aria-label="Share your idea">
+    <span class="ideaic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg></span>
+    <b>Your idea could be next</b>
+    <a class="ideab" href="https://docs.google.com/forms/d/e/1FAIpQLSd0qFebzZqUU251o0Cv15Pc3dl46sYcZST7tallobUiROO0Bw/viewform?usp=header" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Let's connect &rarr;</a>
+  </section>
+
   <footer class="disc" id="disclaimer">
     <h2>Disclaimer</h2>
     <p>This calculator provides general information only and is intended for illustration and educational purposes. It is not financial, investment, tax, legal or credit advice, and it does not take into account your objectives, financial situation or needs. We are not licensed financial advisers, mortgage brokers or tax agents.</p>
     <details class="dmore" id="discD"><summary>Read full disclaimer</summary>
     <p>All results are estimates based solely on the figures you enter and on simplified assumptions. Property growth, the interest rate and expenses stay the same every year, and rent rises at the fixed rate you choose. Stamp duty and other costs are a simple percentage of the price, and Lenders Mortgage Insurance (LMI) is a rough estimate based on typical published rates; actual premiums vary by lender and insurer. The calculator does not include income tax, negative gearing, depreciation, capital gains tax, land tax, vacancy periods, inflation or changes in interest rates. Actual outcomes will differ, and past or assumed returns are not a guarantee of future results.</p>
     <p>Do not rely on this calculator to make any financial decision. Before buying, selling or borrowing, consider seeking advice from a licensed financial adviser, mortgage broker or registered tax agent. You use this calculator at your own risk, and we accept no liability for any loss arising from its use.</p>
+    <p>If you share your email through our feedback form, we'll only use it to reply to you.</p>
       </details>
   </footer>
 </div>
